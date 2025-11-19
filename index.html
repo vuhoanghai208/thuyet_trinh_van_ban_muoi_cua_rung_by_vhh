@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thuyết Trình: Muối Của Rừng.</title>
+    <title>Thuyết Trình: Muối Của Rừng (Big Font)</title>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* --- CẤU HÌNH CHUNG --- */
@@ -24,87 +24,131 @@
             color: var(--text-color);
             display: flex; justify-content: center; align-items: center;
             height: 100vh; overflow: hidden;
-            perspective: 2500px;
+            perspective: 3000px; 
         }
 
+        /* --- KHUNG SÁCH --- */
         .book-container {
             width: var(--slide-width);
             height: var(--slide-height);
             position: relative;
             transform-style: preserve-3d;
+            transform: rotateY(0deg); 
+            transition: transform 1s;
         }
 
+        /* --- TRANG GIẤY (SLIDE) --- */
         .slide {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--bg-color);
             background-image: linear-gradient(to right, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0) 5%, rgba(0,0,0,0) 100%), url('https://www.transparenttextures.com/patterns/cream-paper.png');
             padding: 50px 80px;
             box-sizing: border-box;
-            border-radius: 2px 15px 15px 2px;
+            border-radius: 4px 15px 15px 4px;
             border: 1px solid #dccbb8;
-            box-shadow: inset 20px 0 50px rgba(0,0,0,0.1), 10px 10px 30px rgba(0,0,0,0.5);
+            
+            box-shadow: 
+                inset 25px 0 40px rgba(0,0,0,0.1), 
+                5px 5px 15px rgba(0,0,0,0.3);
+
             transform-origin: left center; 
-            transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
-            backface-visibility: hidden; transform-style: preserve-3d;
-            transform: rotateY(0deg); overflow-y: auto;
+            transition: transform 1.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.6s;
+            backface-visibility: hidden;
+            transform-style: preserve-3d;
+            overflow-y: auto; /* Thanh cuộn sẽ hiện nếu chữ quá to tràn trang */
+            transform: rotateY(0deg);
         }
 
-        .slide.flipped { transform: rotateY(-180deg); pointer-events: none; }
+        .slide.flipped { 
+            transform: rotateY(-180deg); 
+            pointer-events: none; 
+        }
 
-        /* --- TYPOGRAPHY --- */
+        /* --- TYPOGRAPHY (ĐÃ CHỈNH SỬA TO HƠN) --- */
         h1, h2 {
             font-family: 'Playfair Display', serif; color: var(--highlight-color);
             text-align: center; border-bottom: 3px solid var(--accent-color);
             padding-bottom: 15px; margin-bottom: 25px;
         }
-        h1 { font-size: 5rem; margin-top: 10%; border: none; line-height: 1.2; }
-        h2 { font-size: 3rem; font-weight: bold; }
-        h3 { color: #5d4037; font-size: 2rem; margin-top: 25px; text-decoration: underline; font-weight: bold;}
         
-        p, li { font-size: 1.6rem; line-height: 1.6; margin-bottom: 15px; text-align: justify; }
-        ul { padding-left: 40px; }
+        /* Tăng H1 */
+        h1 { font-size: 6rem; margin-top: 8%; border: none; line-height: 1.2; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        
+        /* Tăng H2 */
+        h2 { font-size: 4.2rem; font-weight: bold; line-height: 1.3; }
+        
+        /* Tăng H3 */
+        h3 { color: #5d4037; font-size: 3.0rem; margin-top: 30px; text-decoration: underline; font-weight: bold;}
+        
+        /* Tăng H4 */
+        h4 { font-size: 2.4rem; color: #3e2723; margin-top: 25px; font-weight: bold; font-style: italic;}
+        
+        /* Tăng nội dung chính (Paragraph & List) */
+        p, li { font-size: 2.2rem; line-height: 1.5; margin-bottom: 20px; text-align: justify; }
+        ul { padding-left: 50px; }
         strong { color: #a0300b; }
 
-        /* Hiệu ứng hiện dần */
-        .fragment { opacity: 0; transform: translateY(20px); transition: all 0.5s ease-out; pointer-events: none; }
-        .fragment.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
-
-        /* Accordion Câu hỏi */
-        details {
-            background: rgba(255, 255, 255, 0.5);
-            border: 2px solid var(--accent-color);
-            border-radius: 10px; margin-bottom: 20px; padding: 20px;
-            transition: all 0.3s; cursor: pointer;
+        /* --- HIỆU ỨNG HIỆN DẦN (FRAGMENT) --- */
+        .fragment { 
+            opacity: 0; 
+            transform: translateY(20px); 
+            transition: all 0.8s ease-out; 
+            pointer-events: none; 
         }
-        details[open] { background: #fff; border-left: 10px solid var(--highlight-color); }
+        .fragment.visible { 
+            opacity: 1; 
+            transform: translateY(0); 
+            pointer-events: auto; 
+        }
+
+        /* --- HỘP CÂU HỎI (ACCORDION) --- */
+        details {
+            background: rgba(255, 255, 255, 0.6);
+            border: 2px solid var(--accent-color);
+            border-radius: 12px; margin-bottom: 25px; padding: 20px;
+            transition: all 0.3s; cursor: pointer;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+        }
+        details:hover { transform: translateY(-2px); box-shadow: 4px 4px 10px rgba(0,0,0,0.1); background: #fff; }
+        details[open] { background: #fff; border-left: 12px solid var(--highlight-color); }
         
+        /* Tăng cỡ chữ câu hỏi */
         summary { 
-            font-weight: 900; font-size: 1.8rem; color: #3e2723; 
+            font-weight: 900; font-size: 2.5rem; color: #3e2723; 
             display: flex; justify-content: space-between; outline: none; list-style: none; align-items: center; line-height: 1.4;
         }
         
+        /* Tăng cỡ chữ câu trả lời */
         .answer-content { 
-            margin-top: 20px; padding-top: 15px; border-top: 2px dashed #ccc; 
-            color: #1a237e; font-style: italic; font-size: 1.7rem; 
+            margin-top: 20px; padding-top: 20px; border-top: 2px dashed #ccc; 
+            color: #1a237e; font-style: italic; font-size: 2.3rem; 
+            animation: fadeIn 0.5s ease-in;
         }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .page-number { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 1.5rem; color: var(--accent-color); z-index: 100; font-weight: bold;}
+        /* Số trang */
+        .page-number { 
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); 
+            font-size: 2.0rem; color: var(--accent-color); z-index: 100; font-weight: bold; 
+            background: rgba(253, 246, 227, 0.9); padding: 8px 20px; border-radius: 20px;
+        }
         
-        /* Nút cuối trang */
+        /* Nút điều hướng cuối trang */
         .end-btn {
-            display: inline-block; padding: 15px 30px; font-size: 1.5rem; font-weight: bold;
-            background: var(--highlight-color); color: #fff; border-radius: 8px;
-            text-decoration: none; margin: 10px; border: none; cursor: pointer; box-shadow: 3px 3px 10px rgba(0,0,0,0.3);
+            display: inline-block; padding: 20px 40px; font-size: 1.8rem; font-weight: bold;
+            background: var(--highlight-color); color: #fff; border-radius: 50px;
+            text-decoration: none; margin: 15px; border: none; cursor: pointer; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: all 0.3s;
         }
-        .end-btn:hover { transform: scale(1.05); background: #bf360c; }
+        .end-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); filter: brightness(1.1); }
 
-        /* Decor */
-        .slide::-webkit-scrollbar { width: 10px; }
+        /* Decor & Scrollbar */
+        .slide::-webkit-scrollbar { width: 12px; }
         .slide::-webkit-scrollbar-track { background: transparent; }
-        .slide::-webkit-scrollbar-thumb { background: var(--accent-color); border-radius: 5px; }
-        .corner-decor { position: absolute; width: 50px; height: 50px; border-color: var(--highlight-color); border-style: solid; opacity: 0.5; pointer-events: none; }
-        .top-left { top: 30px; left: 30px; border-width: 4px 0 0 4px; }
-        .bottom-right { bottom: 30px; right: 30px; border-width: 0 4px 4px 0; }
+        .slide::-webkit-scrollbar-thumb { background: var(--accent-color); border-radius: 6px; }
+        .corner-decor { position: absolute; width: 60px; height: 60px; border-color: var(--highlight-color); border-style: solid; opacity: 0.4; pointer-events: none; }
+        .top-left { top: 30px; left: 30px; border-width: 5px 0 0 5px; }
+        .bottom-right { bottom: 30px; right: 30px; border-width: 0 5px 5px 0; }
 
     </style>
 </head>
@@ -116,10 +160,11 @@
             <div class="corner-decor top-left"></div>
             <div class="corner-decor bottom-right"></div>
             <div style="display: flex; flex-direction: column; height: 100%; justify-content: center; align-items: center; text-align: center;">
-                <p style="font-size: 2rem; letter-spacing: 5px; margin-bottom: 0; color: var(--accent-color);">TỔNG HỢP KIẾN THỨC</p>
+                <p style="font-size: 3rem; letter-spacing: 5px; margin-bottom: 0; color: var(--accent-color); font-weight: bold;">TỔNG HỢP KIẾN THỨC</p>
                 <h1>MUỐI CỦA RỪNG</h1>
-                <div style="width: 200px; height: 5px; background: var(--highlight-color); margin: 40px auto;"></div>
-                <p style="font-size: 2.5rem; font-style: italic;">Nguyễn Huy Thiệp</p>
+                <div style="width: 300px; height: 8px; background: var(--highlight-color); margin: 40px auto;"></div>
+                <p style="font-size: 3rem; font-style: italic;">Nguyễn Huy Thiệp</p>
+                <p style="font-size: 1.8rem; margin-top: 30px; color: #555;">(Bấm chuột hoặc nhấn phím mũi tên để lật trang)</p>
             </div>
         </div>
 
@@ -130,7 +175,7 @@
                     <summary>Nêu một số tác phẩm văn học hiện đại có yếu tố kì ảo và cảm nhận về chúng?</summary>
                     <div class="answer-content">
                         <p><strong>Tác phẩm:</strong> <em>Tết ở làng địa ngục</em> (Thảo Trang), <em>Vợ chồng A Phủ</em> (Tô Hoài), <em>Chí Phèo</em> (Nam Cao), <em>Làng</em> (Kim Lân).</p>
-                        <p><strong>Cảm nhận (Tết ở làng địa ngục):</strong> Yếu tố kỳ ảo không chỉ tạo nên không khí bí ẩn, rùng rợn mà còn giúp tác giả phản ánh chân thực hiện thực xã hội thông qua các tình tiết liêu trai, ma quái, qua đó làm nổi bật hơn bi kịch của con người trong thời kỳ đầy biến động.</p>
+                        <p><strong>Cảm nhận (Tết ở làng địa ngục):</strong> Yếu tố kỳ ảo không chỉ tạo nên không khí bí ẩn, rùng rợn mà còn giúp tác giả phản ánh chân thực hiện thực xã hội thông qua các tình tiết liêu trai, ma quái.</p>
                     </div>
                 </details>
             </div>
@@ -157,16 +202,15 @@
         <div class="slide" id="slide-3">
             <h2>B. PHÂN TÍCH CHI TIẾT</h2>
             <h3>Luận điểm 1: Hình ảnh ông Diểu ban đầu</h3>
-            <p><em>(Đây là hình ảnh con người khi chưa đối diện với thiên nhiên bằng tâm hồn thức tỉnh).</em></p>
+            <p><em>(Hình ảnh con người khi chưa đối diện với thiên nhiên bằng tâm hồn thức tỉnh - Kẻ đi săn ngạo nghễ).</em></p>
             <div class="fragment">
                 <ul>
-                    <li><strong>Thái độ:</strong> Tự tin, ngạo nghễ của kẻ đi săn lão luyện. Xem thiên nhiên là đối tượng tiêu khiển ngày xuân.</li>
-                    <li><strong>Coi thường thiên nhiên:</strong> Trang bị đầy đủ vũ khí, xem việc bắn được con mồi là thành tích. Cái nhìn thực dụng, lạnh lùng (chỉ quan tâm lợi ích).</li>
+                    <li><strong>Thái độ:</strong> Tự tin, thậm chí là ngạo nghễ của một người đi săn lão luyện. Xem thiên nhiên là đối tượng tiêu khiển ngày xuân.</li>
+                    <li><strong>Coi thường thiên nhiên:</strong> Trang bị đầy đủ vũ khí, xem việc bắn được con mồi là thành tích. Cái nhìn thực dụng, lạnh lùng.</li>
                     <li><strong>Dẫn chứng:</strong>
                         <ul>
-                            <li>Chuẩn bị kỹ càng: Quần áo sốc lại, súng hai nòng.</li>
-                            <li>Chọn mục tiêu: Ngắm bắn khỉ đực đầu đàn vì bộ lông quý.</li>
-                            <li>Suy nghĩ: Cho rằng mình là kẻ mạnh, có quyền sinh sát.</li>
+                            <li>Chuẩn bị kỹ càng: Quần áo sốc lại, khẩu súng hai nòng, đạn dược.</li>
+                            <li>Chọn mục tiêu: Ngắm bắn con khỉ đực đầu đàn vì nghĩ bộ lông có giá trị.</li>
                         </ul>
                     </li>
                 </ul>
@@ -176,11 +220,13 @@
         <div class="slide" id="slide-4">
             <h2>B. PHÂN TÍCH CHI TIẾT</h2>
             <h3>Luận điểm 2: Bước ngoặt thức tỉnh</h3>
+            <p><em>(Bi kịch và Tình thương).</em></p>
             <div class="fragment">
                 <ul>
                     <li><strong>Sự kiện bắn khỉ:</strong> Ông Diểu bắn trúng khỉ đực. Nhưng bất ngờ thay, khỉ cái không bỏ chạy mà quay lại cứu, khỉ con cũng xuất hiện.</li>
-                    <li><strong>Tình cảm thức tỉnh:</strong> Từ tư thế kẻ đi săn, ông chứng kiến "tình người" trong loài vật. Hành động hy sinh của gia đình khỉ khiến ông rung động.</li>
-                    <li><strong>Bi kịch:</strong> Ông nhận ra sự tàn ác của mình. Đây là bi kịch của kẻ chiến thắng nhưng thua cuộc về đạo đức.</li>
+                    <li><strong>Bối cảnh:</strong> Thiên nhiên lúc này bắt đầu tác động vào tâm trí ông, từ hả hê chuyển sang ngỡ ngàng.</li>
+                    <li><strong>Tình cảm (Thức tỉnh):</strong> Từ tư thế kẻ đi săn, ông chứng kiến "tình người" trong loài vật. Hành động hy sinh của gia đình khỉ khiến ông rung động.</li>
+                    <li><strong>Bi kịch:</strong> Ông nhận ra sự tàn ác của mình. Bi kịch của kẻ chiến thắng nhưng thua cuộc về đạo đức.</li>
                 </ul>
             </div>
         </div>
@@ -190,46 +236,43 @@
             <h3>Luận điểm 2 (Tiếp): Sự dao động</h3>
             <div class="fragment">
                 <ul>
-                    <li><strong>Tâm trạng giằng xé:</strong> Giữa Bản năng sát thủ (muốn giết nốt) và Lương tri (thương xót).</li>
-                    <li><strong>Hành động trái ngược:</strong> Ông chửi thề, tức giận để che giấu sự yếu đuối, nhưng hành động lại đi ngược lại ý định ban đầu.</li>
-                    <li><strong>Dẫn chứng:</strong> Ông không giết con khỉ bị thương mà lại xé áo băng bó cho nó.</li>
-                    <li><strong>Kết quả:</strong> Ông quyết định phóng sinh con khỉ, vứt bỏ cả quần áo, súng đạn -> Chiến thắng của nhân tính.</li>
+                    <li><strong>Tâm trạng giằng xé:</strong> Giữa Bản năng sát thủ (muốn giết nốt) và Lương tri (thương xót, hối hận).</li>
+                    <li><strong>Hành động trái ngược:</strong> Ông chửi thề, tức giận để che giấu sự yếu đuối, nhưng hành động lại đi ngược lại: Ông không giết con khỉ bị thương mà xé áo băng bó cho nó.</li>
+                    <li><strong>Kết quả:</strong> Ông quyết định phóng sinh con khỉ, vứt bỏ cả quần áo, súng đạn để trở về trần trụi nhưng thanh thản.</li>
                 </ul>
             </div>
         </div>
 
         <div class="slide" id="slide-6">
             <h2>B. PHÂN TÍCH CHI TIẾT</h2>
-            <h3>Luận điểm 3: Sự tái sinh</h3>
+            <h3>Luận điểm 3: Sự tái sinh trong nhận thức</h3>
             <div class="fragment">
+                <h4>1. Sự thay đổi trong hành động (dấu hiệu sám hối)</h4>
                 <ul>
-                    <li><strong>Sám hối:</strong> Khi bắn xong, "chân tay run rẩy", cảm thấy tội lỗi. Sự chần chừ khi định bóp cò lần hai cho thấy lương tâm đã kìm hãm bản năng.</li>
-                    <li><strong>Hành động biểu tượng:</strong>
-                        <ul>
-                            <li>Hét lên "Chạy đi!": Lần đầu đứng về phía thú rừng.</li>
-                            <li>Ném súng: Từ bỏ bạo lực, quyền lực hủy diệt.</li>
-                            <li>Khỉ kéo súng đi: Thiên nhiên "kéo đi" cái ác, trả lại sự trong sạch.</li>
-                        </ul>
-                    </li>
-                    <li><strong>Kết quả:</strong> Ông Diểu nhận ra bản chất thiện lương, học được bài học về tình yêu thương và sự hy sinh.</li>
+                    <li>Từ kẻ săn bắt → trở nên chần chừ, run rẩy trước hành động bạo lực của chính mình.</li>
+                    <li>Khi bắn con khỉ đực, "chân tay ông run ra", cảm thấy tội lỗi và ghê sợ hành động của mình.</li>
+                    <li>Ông Diêu không còn coi thú rừng là đối tượng giết hại mà nhìn chúng như "đồng loại".</li>
                 </ul>
             </div>
         </div>
 
         <div class="slide" id="slide-7">
-            <h2>C. LUYỆN TẬP</h2>
+            <h2>B. PHÂN TÍCH CHI TIẾT</h2>
+            <h3>Luận điểm 3 (Tiếp): Tái sinh & Kết quả</h3>
             <div class="fragment">
-                <details>
-                    <summary>Câu 1: Giữa nhan đề "Muối của rừng" và nội dung câu chuyện có liên hệ với nhau như thế nào?</summary>
-                    <div class="answer-content">
-                        <ul>
-                            <li>Tiêu đề không ngẫu nhiên, chứa đựng ý nghĩa sâu xa.</li>
-                            <li>Là cảnh báo về sự phức tạp và bí ẩn trong rừng sâu.</li>
-                            <li>Cái tên là thước đo cho sự bí ẩn, sức mạnh của tự nhiên.</li>
-                            <li>Lời nhắc nhở về việc không ngừng khám phá và học hỏi trong cuộc sống.</li>
-                        </ul>
-                    </div>
-                </details>
+                <h4>2. Hành động mang tính biểu tượng</h4>
+                <ul>
+                    <li><strong>Hét lên "Chạy đi!":</strong> Lần đầu tiên đứng về phía thú rừng.</li>
+                    <li><strong>Ném súng:</strong> Biểu tượng từ bỏ bạo lực, quyền lực hủy diệt.</li>
+                    <li><strong>Khỉ kéo súng đi:</strong> Thiên nhiên "kéo đi" cái ác, trả lại sự trong sạch cho con người.</li>
+                </ul>
+            </div>
+            <div class="fragment">
+                <h4>3. Kết quả tái sinh</h4>
+                <ul>
+                    <li>Ông Diêu nhận ra bản chất thiện lương của mình.</li>
+                    <li>Học được bài học về tình yêu thương và sự hy sinh từ loài vật.</li>
+                </ul>
             </div>
         </div>
 
@@ -237,15 +280,13 @@
             <h2>C. LUYỆN TẬP</h2>
             <div class="fragment">
                 <details>
-                    <summary>Câu 2: Tóm tắt hành trình trải nghiệm và nhận thức của ông Diểu?</summary>
+                    <summary>Câu 1: Giữa nhan đề "Muối của rừng" và nội dung câu chuyện có liên hệ với nhau như thế nào?</summary>
                     <div class="answer-content">
                         <ul>
-                            <li><strong>Niềm vui, háo hức:</strong> Đi vào rừng với tinh thần phấn khích.</li>
-                            <li><strong>Gặp đàn khỉ:</strong> Kích động, tò mò.</li>
-                            <li><strong>Bắn chết khỉ đực:</strong> Bạo lực -> Hối tiếc, hỗn loạn.</li>
-                            <li><strong>Quan sát khỉ cái:</strong> Thấy tình cảm gia đình -> Suy nghĩ.</li>
-                            <li><strong>Bị tấn công:</strong> Hoảng sợ, đối mặt nguy hiểm.</li>
-                            <li><strong>Kết thúc:</strong> Mất đi niềm vui ban đầu nhưng có nhận thức mới, thức tỉnh.</li>
+                            <li>Tiêu đề không ngẫu nhiên, chứa đựng ý nghĩa sâu xa.</li>
+                            <li>Là cảnh báo về sự phức tạp và những bí ẩn trong rừng sâu.</li>
+                            <li>Cái tên là thước đo cho sự bí ẩn, sức mạnh của tự nhiên.</li>
+                            <li>Lời nhắc nhở về việc không ngừng khám phá và học hỏi trong cuộc sống.</li>
                         </ul>
                     </div>
                 </details>
@@ -256,9 +297,28 @@
             <h2>C. LUYỆN TẬP</h2>
             <div class="fragment">
                 <details>
-                    <summary>Câu 3: Ý nghĩ của ông Diểu khi chứng kiến đời sống đàn khỉ?</summary>
+                    <summary>Câu 2: Tóm tắt hành trình trải nghiệm và nhận thức của ông Diểu?</summary>
                     <div class="answer-content">
-                        <p>Những suy tư rất đáng quý trọng. Gợi nhắc tầm quan trọng của việc học hỏi, nâng cao ý thức bảo vệ môi trường và sự sống loài vật.</p>
+                        <ul>
+                            <li><strong>Niềm vui, háo hức:</strong> Đi vào rừng với tinh thần phấn khích.</li>
+                            <li><strong>Gặp đàn khỉ:</strong> Kích động, tò mò.</li>
+                            <li><strong>Bắn chết khỉ đực:</strong> Bạo lực -> Hối tiếc, hỗn loạn.</li>
+                            <li><strong>Quan sát khỉ cái:</strong> Thấy tình cảm gia đình -> Suy ngẫm.</li>
+                            <li><strong>Bị tấn công & Chiến đấu:</strong> Đối mặt nguy hiểm.</li>
+                            <li><strong>Kết thúc:</strong> Mất đi niềm vui ban đầu nhưng thức tỉnh với sự hiểu biết mới.</li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="slide" id="slide-10">
+            <h2>C. LUYỆN TẬP</h2>
+            <div class="fragment">
+                <details>
+                    <summary>Câu 3: Ý nghĩ của ông Diểu khi chứng kiến đời sống đàn khỉ? Bạn có đồng tình?</summary>
+                    <div class="answer-content">
+                        <p>Ông rung động trước tình cảm gắn bó của loài vật. Điều này gợi nhắc tầm quan trọng của việc tôn trọng sự sống muôn loài và nâng cao ý thức bảo vệ môi trường.</p>
                     </div>
                 </details>
             </div>
@@ -276,13 +336,13 @@
             </div>
         </div>
 
-        <div class="slide" id="slide-10">
+        <div class="slide" id="slide-11">
             <h2>C. LUYỆN TẬP</h2>
             <div class="fragment">
                 <details>
                     <summary>Câu 5: Ý nghĩa chi tiết "hoa tử huyền" cuối truyện?</summary>
                     <div class="answer-content">
-                        <p>Là yếu tố nghệ thuật quan trọng. Biểu tượng cho <strong>sự hy vọng về tái sinh</strong>, vẻ đẹp thuần khiết và nâng cao giá trị tư tưởng tác phẩm.</p>
+                        <p>Là yếu tố nghệ thuật quan trọng. Biểu tượng cho <strong>sự hy vọng về tái sinh</strong>, vẻ đẹp thuần khiết và sự thức tỉnh lương tri (hoa nở khi ông Diểu trở về tay trắng).</p>
                     </div>
                 </details>
             </div>
@@ -293,23 +353,7 @@
                         <ul>
                             <li><strong>Đầu:</strong> Thợ săn già nua, lam lũ nhưng tự tin, lão luyện.</li>
                             <li><strong>Cuối:</strong> "Trần truồng", "lấm lem", yếu đuối, bị động.</li>
-                            <li><strong>Thông điệp:</strong> Bài học quý giá về bảo vệ thiên nhiên và sống hòa hợp.</li>
-                        </ul>
-                    </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="slide" id="slide-11">
-            <h2>C. LUYỆN TẬP</h2>
-            <div class="fragment">
-                <details>
-                    <summary>Câu 7: Yếu tố kì ảo trong "Muối của rừng" khác gì "Đền thiêng cửa bể"?</summary>
-                    <div class="answer-content">
-                        <p>Cả hai đều dùng yếu tố kỳ ảo. Tuy nhiên:</p>
-                        <ul>
-                            <li><strong>Muối của rừng:</strong> Kì ảo mang tính biểu tượng, triết lý (nội tâm, vẻ đẹp tự nhiên).</li>
-                            <li><strong>Đền thiêng cửa bể:</strong> Kì ảo mang màu sắc lịch sử, huyền thoại, tâm linh.</li>
+                            <li><strong>Thông điệp:</strong> Bài học quý giá về bảo vệ thiên nhiên: Để hòa hợp, con người đôi khi phải trút bỏ những vỏ bọc văn minh giả tạo.</li>
                         </ul>
                     </div>
                 </details>
@@ -317,6 +361,22 @@
         </div>
 
         <div class="slide" id="slide-12">
+            <h2>C. LUYỆN TẬP</h2>
+            <div class="fragment">
+                <details>
+                    <summary>Câu 7: Yếu tố kì ảo trong "Muối của rừng" khác gì "Đền thiêng cửa bể"?</summary>
+                    <div class="answer-content">
+                        <p>Cả hai đều dùng yếu tố kỳ ảo. Tuy nhiên:</p>
+                        <ul>
+                            <li><strong>Muối của rừng:</strong> Kì ảo mang tính biểu tượng, triết lý, hướng nội (hoa tử huyền, khỉ biến mất).</li>
+                            <li><strong>Đền thiêng cửa bể:</strong> Kì ảo mang màu sắc lịch sử, huyền thoại, tâm linh để phản ánh số phận con người.</li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <div class="slide" id="slide-13">
             <h2>TỔNG KẾT</h2>
             <div class="fragment">
                 <h3>1. Nội dung</h3>
@@ -328,13 +388,15 @@
             </div>
         </div>
 
-        <div class="slide" id="slide-13">
+        <div class="slide" id="slide-14">
             <div style="display: flex; flex-direction: column; height: 100%; justify-content: center; align-items: center; text-align: center;">
                 <h1>CẢM ƠN ĐÃ LẮNG NGHE</h1>
                 <p><em>"Muối của rừng chính là sự kết tinh của lòng nhân ái."</em></p>
                 
-                <div style="margin-top: 60px; display: flex; gap: 20px;">
-                    <button onclick="location.reload()" class="end-btn">⟳ Về Trang Đầu</button>
+                <div style="margin-top: 60px; display: flex; gap: 30px;">
+                    <button onclick="location.reload()" class="end-btn">
+                        ⟳ Về Trang Đầu
+                    </button>
                     
                     <a href="https://vuhoanghai208.github.io/van_thuyet_trinh/" class="end-btn" style="background: #3e2723; border-color: #3e2723;">
                         🎮 Chuyển Đến Trò Chơi
@@ -345,62 +407,79 @@
 
     </div>
 
-    <div class="page-number">Trang <span id="page-num">1</span> / 14</div>
+    <div class="page-number">Trang <span id="page-num">1</span> / 16</div>
 
     <script>
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         const pageNum = document.getElementById('page-num');
 
+        // --- KHỞI TẠO Z-INDEX ---
         function initZIndex() {
             slides.forEach((slide, index) => {
-                slide.style.zIndex = 100 - index;
-                slide.style.display = 'block';
+                slide.style.zIndex = 100 - index; 
+                slide.style.display = 'block'; 
+                slide.classList.remove('flipped', 'active');
             });
+            slides[0].classList.add('active');
         }
-        initZIndex();
 
         function updatePageNum() {
-            pageNum.textContent = (currentSlide + 1) + " / " + slides.length;
+            pageNum.textContent = "Trang " + (currentSlide + 1) + " / " + slides.length;
         }
 
+        // --- XỬ LÝ NEXT ---
         function handleNext() {
+            if (currentSlide >= slides.length - 1) return;
+
             const currentSlideEl = slides[currentSlide];
             const hiddenFragments = currentSlideEl.querySelectorAll('.fragment:not(.visible)');
+            
+            // Nếu còn nội dung ẩn -> Hiện nội dung trước
             if (hiddenFragments.length > 0) {
                 hiddenFragments[0].classList.add('visible');
             } else {
+                // Hết nội dung -> Lật trang
                 goToSlide(currentSlide + 1);
             }
         }
 
+        // --- XỬ LÝ PREV ---
         function handlePrev() {
+            if (currentSlide <= 0) return;
             goToSlide(currentSlide - 1);
         }
 
+        // --- HÀM LẬT TRANG 3D ---
         function goToSlide(n) {
-            if (n >= slides.length || n < 0) return;
+            if (n < 0 || n >= slides.length) return;
 
-            if (n > currentSlide) {
+            if (n > currentSlide) { // TIẾN
                 const oldSlide = slides[currentSlide];
                 const newSlide = slides[n];
+
                 oldSlide.classList.add('flipped');
                 oldSlide.classList.remove('active');
+                
                 newSlide.classList.add('active');
                 newSlide.classList.remove('flipped');
-            } else {
+            } else { // LÙI
                 const oldSlide = slides[currentSlide];
                 const newSlide = slides[n];
+
                 oldSlide.classList.remove('active');
-                newSlide.classList.remove('flipped');
+                
+                newSlide.classList.remove('flipped'); // Quan trọng: Bỏ class flipped để trang quay về
                 newSlide.classList.add('active');
             }
             currentSlide = n;
             updatePageNum();
         }
 
+        // --- SỰ KIỆN CLICK ---
         document.addEventListener('click', function(event) {
             if (event.target.closest('details') || event.target.closest('button') || event.target.closest('a')) return;
+            
             if (event.clientX < window.innerWidth * 0.2) {
                 handlePrev();
             } else {
@@ -408,6 +487,7 @@
             }
         });
 
+        // --- SỰ KIỆN PHÍM ---
         document.addEventListener('keydown', function(event) {
             if (event.key === "ArrowRight" || event.key === " " || event.key === "Enter") {
                 handleNext();
@@ -416,7 +496,10 @@
             }
         });
         
-        slides[0].classList.add('active');
+        // CHẠY LẦN ĐẦU
+        initZIndex();
+        updatePageNum();
+
     </script>
 </body>
 </html>
