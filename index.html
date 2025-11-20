@@ -3,503 +3,1068 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thuyết Trình: Muối Của Rừng (Big Font)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <title>Ai Là Triệu Phú - Dragon Storm Edition</title>
     <style>
-        /* --- CẤU HÌNH CHUNG --- */
+        /* --- 1. CẤU HÌNH CHUNG --- */
         :root {
-            --bg-color: #fdf6e3;
-            --text-color: #2b2b2b;
-            --accent-color: #8d6e63;
-            --highlight-color: #a0300b;
-            --slide-width: 85vw; 
-            --slide-height: 92vh;
+            --primary-bg: #0f0c15;
+            --gold-gradient: linear-gradient(to bottom, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+            --bronze-texture: #2b1d0e;
+            --blue-box: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
+            
+            /* --- ĐIỀU CHỈNH CỠ CHỮ TẠI ĐÂY --- */
+            --font-huge: clamp(4rem, 8vw, 9rem);      /* Tiêu đề game */
+            --font-big: clamp(2.5rem, 5vw, 6rem);     /* Câu hỏi (Đã tăng lên) */
+            --font-medium: clamp(1.8rem, 3.5vw, 4rem); /* Đáp án (Đã tăng lên) */
+            
+            --gold-color: #ffcc00;
         }
 
         body {
-            margin: 0; padding: 0;
-            font-family: 'Merriweather', serif;
-            background-color: #1a1a1a;
-            background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
-            color: var(--text-color);
+            font-family: 'Verdana', sans-serif;
+            background: var(--primary-bg);
+            color: #fff;
             display: flex; justify-content: center; align-items: center;
-            height: 100vh; overflow: hidden;
-            perspective: 3000px; 
+            height: 100vh; margin: 0; overflow: hidden;
+            user-select: none; perspective: 1000px;
+            cursor: pointer;
         }
 
-        /* --- KHUNG SÁCH --- */
-        .book-container {
-            width: var(--slide-width);
-            height: var(--slide-height);
-            position: relative;
-            transform-style: preserve-3d;
-            transform: rotateY(0deg); 
-            transition: transform 1s;
+        .is-hidden { display: none !important; }
+
+        /* --- BACKGROUND 3D --- */
+        .bg-3d-container { position: fixed; inset: 0; pointer-events: none; z-index: 0; transform-style: preserve-3d; overflow: hidden; }
+        .cube-floater {
+            position: absolute; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
+            transform-style: preserve-3d; animation: floatCube linear infinite;
+        }
+        .cube-floater::before, .cube-floater::after { content: ''; position: absolute; inset: 0; background: inherit; border: inherit; }
+        .cube-floater::before { transform: translateZ(-20px); }
+        .cube-floater::after { transform: rotateY(90deg) translateZ(-20px); }
+        @keyframes floatCube {
+            0% { transform: translateZ(-500px) rotate(0deg) translateY(100vh); opacity: 0; }
+            20%, 80% { opacity: 1; }
+            100% { transform: translateZ(200px) rotate(360deg) translateY(-20vh); opacity: 0; }
         }
 
-        /* --- TRANG GIẤY (SLIDE) --- */
-        .slide {
+        /* --- HIỆU ỨNG SÉT (LIGHTNING) --- */
+        #lightning-container {
+            position: fixed; inset: 0; pointer-events: none; z-index: 5;
+            overflow: hidden;
+        }
+        .lightning-bolt {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--bg-color);
-            background-image: linear-gradient(to right, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0) 5%, rgba(0,0,0,0) 100%), url('https://www.transparenttextures.com/patterns/cream-paper.png');
-            padding: 50px 80px;
-            box-sizing: border-box;
-            border-radius: 4px 15px 15px 4px;
-            border: 1px solid #dccbb8;
-            
-            box-shadow: 
-                inset 25px 0 40px rgba(0,0,0,0.1), 
-                5px 5px 15px rgba(0,0,0,0.3);
-
-            transform-origin: left center; 
-            transition: transform 1.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.6s;
-            backface-visibility: hidden;
-            transform-style: preserve-3d;
-            overflow-y: auto; /* Thanh cuộn sẽ hiện nếu chữ quá to tràn trang */
-            transform: rotateY(0deg);
+            fill: none; stroke: #fff; stroke-width: 3px;
+            stroke-linecap: round; stroke-linejoin: round;
+            filter: drop-shadow(0 0 10px #00ffff) drop-shadow(0 0 20px #fff);
+            opacity: 0;
+            animation: flashBolt 0.15s linear forwards;
+        }
+        @keyframes flashBolt {
+            0% { opacity: 0; }
+            10% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 0; }
         }
 
-        .slide.flipped { 
-            transform: rotateY(-180deg); 
-            pointer-events: none; 
+        /* --- HIỆU ỨNG RUNG (RUMBLE) --- */
+        .screen-explode-shake { animation: violentShake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes violentShake {
+            0% { transform: translate(0, 0); }
+            10% { transform: translate(-10px, -10px) rotate(-2deg); }
+            30% { transform: translate(10px, 10px) rotate(2deg); }
+            50% { transform: translate(-10px, 10px) rotate(-2deg); }
+            70% { transform: translate(10px, -10px) rotate(2deg); }
+            100% { transform: translate(0, 0); }
+        }
+        
+        .rumble-active { animation: heavyGrind 0.1s infinite; }
+        @keyframes heavyGrind {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(-2px, 2px); }
+            50% { transform: translate(2px, -1px); }
+            75% { transform: translate(-1px, -2px); }
+            100% { transform: translate(0, 0); }
         }
 
-        /* --- TYPOGRAPHY (ĐÃ CHỈNH SỬA TO HƠN) --- */
-        h1, h2 {
-            font-family: 'Playfair Display', serif; color: var(--highlight-color);
-            text-align: center; border-bottom: 3px solid var(--accent-color);
-            padding-bottom: 15px; margin-bottom: 25px;
-        }
-        
-        /* Tăng H1 */
-        h1 { font-size: 6rem; margin-top: 8%; border: none; line-height: 1.2; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
-        
-        /* Tăng H2 */
-        h2 { font-size: 4.2rem; font-weight: bold; line-height: 1.3; }
-        
-        /* Tăng H3 */
-        h3 { color: #5d4037; font-size: 3.0rem; margin-top: 30px; text-decoration: underline; font-weight: bold;}
-        
-        /* Tăng H4 */
-        h4 { font-size: 2.4rem; color: #3e2723; margin-top: 25px; font-weight: bold; font-style: italic;}
-        
-        /* Tăng nội dung chính (Paragraph & List) */
-        p, li { font-size: 2.2rem; line-height: 1.5; margin-bottom: 20px; text-align: justify; }
-        ul { padding-left: 50px; }
-        strong { color: #a0300b; }
-
-        /* --- HIỆU ỨNG HIỆN DẦN (FRAGMENT) --- */
-        .fragment { 
-            opacity: 0; 
-            transform: translateY(20px); 
-            transition: all 0.8s ease-out; 
-            pointer-events: none; 
-        }
-        .fragment.visible { 
-            opacity: 1; 
-            transform: translateY(0); 
-            pointer-events: auto; 
+        .impact-shake { animation: heavyImpact 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes heavyImpact {
+            0% { transform: rotateY(-15deg) rotateX(5deg) translateY(0); }
+            10% { transform: rotateY(-15deg) rotateX(5deg) translateY(40px); }
+            30% { transform: rotateY(-15deg) rotateX(5deg) translateY(-20px); }
+            50% { transform: rotateY(-15deg) rotateX(5deg) translateY(10px); }
+            100% { transform: rotateY(-15deg) rotateX(5deg) translateY(0); }
         }
 
-        /* --- HỘP CÂU HỎI (ACCORDION) --- */
-        details {
-            background: rgba(255, 255, 255, 0.6);
-            border: 2px solid var(--accent-color);
-            border-radius: 12px; margin-bottom: 25px; padding: 20px;
-            transition: all 0.3s; cursor: pointer;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
-        }
-        details:hover { transform: translateY(-2px); box-shadow: 4px 4px 10px rgba(0,0,0,0.1); background: #fff; }
-        details[open] { background: #fff; border-left: 12px solid var(--highlight-color); }
-        
-        /* Tăng cỡ chữ câu hỏi */
-        summary { 
-            font-weight: 900; font-size: 2.5rem; color: #3e2723; 
-            display: flex; justify-content: space-between; outline: none; list-style: none; align-items: center; line-height: 1.4;
-        }
-        
-        /* Tăng cỡ chữ câu trả lời */
-        .answer-content { 
-            margin-top: 20px; padding-top: 20px; border-top: 2px dashed #ccc; 
-            color: #1a237e; font-style: italic; font-size: 2.3rem; 
-            animation: fadeIn 0.5s ease-in;
-        }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .flash-overlay { position: fixed; inset: 0; background: #fff; z-index: 4000; opacity: 0; pointer-events: none; mix-blend-mode: overlay; }
+        .flash-active { animation: flashBang 0.6s ease-out forwards; }
+        @keyframes flashBang { 0% { opacity: 1; } 100% { opacity: 0; } }
 
-        /* Số trang */
-        .page-number { 
-            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); 
-            font-size: 2.0rem; color: var(--accent-color); z-index: 100; font-weight: bold; 
-            background: rgba(253, 246, 227, 0.9); padding: 8px 20px; border-radius: 20px;
+        /* --- UI BUTTONS --- */
+        .btn-action {
+            cursor: pointer; font-size: 1.2rem; padding: 15px 40px; margin: 20px;
+            border-radius: 50px; border: 2px solid #fff; background: var(--gold-gradient); color: #2c1b05;
+            font-weight: 900; text-transform: uppercase; box-shadow: 0 10px 20px rgba(0,0,0,0.5); transition: all 0.2s;
+            z-index: 100; position: relative;
+        }
+        .btn-action:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 0 20px #ffcc00; }
+        .btn-secondary { background: #444; color: #fff; border-color: #999; }
+        
+        /* --- FULL SCREEN BUTTON --- */
+        .btn-fullscreen {
+            position: fixed; top: 20px; left: 20px; width: 50px; height: 50px;
+            background: rgba(0,0,0,0.6); border: 2px solid rgba(255,255,255,0.5); border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 9999;
+            transition: all 0.3s;
+        }
+        .btn-fullscreen:hover { background: rgba(255, 204, 0, 0.3); border-color: #ffcc00; box-shadow: 0 0 15px #ffcc00; }
+        .btn-fullscreen svg { width: 24px; height: 24px; fill: #fff; filter: drop-shadow(0 0 2px #000); }
+
+        .btn-next-external {
+            position: fixed; bottom: 2vh; right: 2vw; width: clamp(60px, 8vw, 90px); height: clamp(60px, 8vw, 90px);
+            background: radial-gradient(circle at 30% 30%, #ff4444, #990000); color: #fff; border: 3px solid #fff; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; text-decoration: none; font-weight: bold; z-index: 9999;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); animation: pulseBtn 2s infinite;
+        }
+        @keyframes pulseBtn { 0% { box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(255, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 68, 68, 0); } }
+
+        .screen-container {
+            position: absolute; width: 100%; height: 100%; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; transition: all 0.6s ease; transform-style: preserve-3d; z-index: 10;
+        }
+        .slide-out-left { transform: translateX(-150%) rotateY(-20deg); opacity: 0; pointer-events: none; }
+        .slide-in-right { transform: translateX(150%) rotateY(20deg); opacity: 0; pointer-events: none; }
+        .slide-center { transform: translateX(0) rotateY(0); opacity: 1; pointer-events: auto; }
+
+        /* --- WHEEL --- */
+        .wheel-wrapper-3d { perspective: 1000px; position: relative; z-index: 50; }
+        .wheel-container {
+            width: 65vw; height: 45vh; background: #000; border: 15px solid #333; border-radius: 10px;
+            overflow: hidden; position: relative; transform: rotateX(10deg); transform-style: preserve-3d;
+            box-shadow: 0 50px 50px rgba(0,0,0,0.8), inset 0 0 80px rgba(0,0,0,1); transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .wheel-container.spinning { border-color: #ffcc00; box-shadow: 0 50px 80px rgba(255, 100, 0, 0.3), inset 0 0 40px #ff4400; animation: shake 0.04s infinite; }
+        @keyframes shake { 0% { transform: rotateX(10deg) translate(1px, 1px); } 50% { transform: rotateX(10deg) translate(-1px, -1px); } 100% { transform: rotateX(10deg) translate(1px, 1px); } }
+        .spark-spin {
+            position: absolute; width: 6px; height: 20px; background: #fff; border-radius: 2px; pointer-events: none; z-index: 200;
+            will-change: transform, opacity; box-shadow: 0 0 5px #ffff00, 0 0 15px #ff0000; mix-blend-mode: screen;
+        }
+        .wheel-pointer {
+            position: absolute; top: 50%; left: -20px; right: -20px; height: 18%;
+            transform: translateY(-50%) translateZ(30px);
+            background: linear-gradient(to bottom, rgba(240, 173, 78, 0.15), rgba(240, 173, 78, 0) 50%, rgba(240, 173, 78, 0.15));
+            border-top: 3px solid var(--gold-color); border-bottom: 3px solid var(--gold-color); z-index: 6; backdrop-filter: blur(2px);
+        }
+        #names-list { list-style: none; padding: 0; margin: 0; transform-style: preserve-3d; }
+        #names-list li { 
+            height: 8vh; display: flex; align-items: center; justify-content: center;
+            font-size: var(--font-big); font-weight: 900; text-transform: uppercase;
+            color: #888; text-shadow: 0 2px 2px rgba(0,0,0,0.8); transform: scale(0.9); opacity: 0.6;
+        }
+
+        /* --- MONEY LADDER (BIGGER & CLEARER) --- */
+        #money-screen { perspective: 1500px; } 
+        .money-card {
+            background: rgba(10, 10, 20, 0.95); border: 2px solid #444; border-radius: 20px;
+            height: 85vh; width: clamp(500px, 70vw, 850px);
+            padding: 10px 0;
+            transform: rotateY(-15deg) rotateX(5deg); transform-style: preserve-3d;
+            box-shadow: -50px 50px 100px rgba(0,0,0,0.8);
+            overflow: hidden; position: relative; display: flex; flex-direction: column; justify-content: flex-end;
+        }
+        .money-scroll-wrapper {
+            width: 100%; max-height: 100%; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none;
+            display: flex; flex-direction: column-reverse; padding-top: 100px; padding-bottom: 20px;
+        }
+        .money-scroll-wrapper::-webkit-scrollbar { display: none; }
+        .money-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column-reverse; width: 100%; transform-style: preserve-3d; }
+        .money-list li {
+            width: 90%; margin: 8px auto; padding: 12px 30px;
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: clamp(1.2rem, 2.5vh, 2.2rem);
+            color: #666; background: rgba(255,255,255,0.05);
+            border: 1px solid #333; border-radius: 10px; transform: translateZ(0px); box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+            transition: all 0.3s; flex-shrink: 0; position: relative;
+        }
+        .money-list li.safe { color: #eee; border-color: #888; }
+        .money-list li.safe .money-idx { color: var(--gold-color); }
+        .money-list li.active {
+            background: linear-gradient(90deg, #b87418, #f0ad4e, #b87418); color: #000 !important; font-weight: 900;
+            border: 3px solid #fff; transform: translateZ(50px) scale(1.15);
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.8), 0 0 10px #ffcc00; z-index: 100;
+            animation: flashBorder 0.5s; 
+        }
+        @keyframes flashBorder { 0% { border-color: #fff; } 50% { border-color: #ffff00; } 100% { border-color: #fff; } }
+
+        .jump-slam-anim { animation: jumpUpDrop 0.6s cubic-bezier(0.7, -0.4, 0.4, 1.4) forwards; z-index: 200; }
+        @keyframes jumpUpDrop {
+            0% { transform: translateZ(0) scale(0.95); }
+            50% { transform: translateZ(100px) translateY(-40px) scale(1.1); } 
+            80% { transform: translateZ(80px) translateY(0) scale(1.2); } 
+            100% { transform: translateZ(80px) translateY(0) scale(1.2); } 
         }
         
-        /* Nút điều hướng cuối trang */
-        .end-btn {
-            display: inline-block; padding: 20px 40px; font-size: 1.8rem; font-weight: bold;
-            background: var(--highlight-color); color: #fff; border-radius: 50px;
-            text-decoration: none; margin: 15px; border: none; cursor: pointer; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: all 0.3s;
+        .ladder-shockwave {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 100%; height: 100%; border-radius: 15px;
+            box-shadow: 0 0 50px rgba(255, 255, 255, 1), inset 0 0 20px rgba(255,255,255,0.8); 
+            border: 8px solid #fff; opacity: 0; z-index: 150; pointer-events: none;
+            mix-blend-mode: overlay;
         }
-        .end-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); filter: brightness(1.1); }
+        .ladder-shockwave-active { animation: ladderWave 0.5s ease-out forwards; }
+        @keyframes ladderWave {
+            0% { transform: translate(-50%, -50%) scale(0.9); opacity: 1; border-width: 10px; }
+            100% { transform: translate(-50%, -50%) scale(1.6, 3); opacity: 0; border-width: 0px; }
+        }
+        
+        .ladder-spark {
+            position: absolute; width: 6px; height: 30px; background: #fff;
+            box-shadow: 0 0 10px #ffcc00, 0 0 20px #ff4400; 
+            border-radius: 4px; z-index: 300; pointer-events: none;
+        }
+        .steam-puff {
+            position: absolute; width: 80px; height: 80px; background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(200,200,200,0) 70%);
+            border-radius: 50%; pointer-events: none; z-index: 200; opacity: 0;
+        }
 
-        /* Decor & Scrollbar */
-        .slide::-webkit-scrollbar { width: 12px; }
-        .slide::-webkit-scrollbar-track { background: transparent; }
-        .slide::-webkit-scrollbar-thumb { background: var(--accent-color); border-radius: 6px; }
-        .corner-decor { position: absolute; width: 60px; height: 60px; border-color: var(--highlight-color); border-style: solid; opacity: 0.4; pointer-events: none; }
-        .top-left { top: 30px; left: 30px; border-width: 5px 0 0 5px; }
-        .bottom-right { bottom: 30px; right: 30px; border-width: 0 5px 5px 0; }
+        /* --- WINNER & GRAND GATE EFFECT --- */
+        #winner-overlay {
+            position: fixed; inset: 0; background: radial-gradient(circle, rgba(20, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.95) 100%);
+            z-index: 3000; display: flex; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(2px); 
+        }
+        #winner-name-big { 
+            font-size: clamp(4rem, 9vw, 10rem); font-weight: 900; text-transform: uppercase;
+            color: transparent; -webkit-text-stroke: 2px #ffcc00; position: relative; z-index: 3500; opacity: 0;
+        }
+        .fire-mode {
+            background: linear-gradient(0deg, #ff0000 0%, #ff8800 50%, #ffff00 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; -webkit-text-stroke: 0px transparent !important;
+            text-shadow: 0 0 10px #ff0000, 0 -5px 20px #ff8800, 0 -10px 40px #ffcc00;
+            animation: firePulse 0.1s infinite alternate; filter: drop-shadow(0 0 10px #ff0000);
+        }
+        @keyframes firePulse { 0% { transform: scale(1); } 100% { transform: scale(1.02); } }
+        .winner-dead-drop { animation: superHeavyDrop 0.4s cubic-bezier(0.6, 0, 1, 1) forwards; }
+        @keyframes superHeavyDrop { 0% { transform: translateY(-150vh) scale(3); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+        
+        .glass-shard {
+            position: absolute; top: 50%; left: 50%; transform-origin: center;
+            background: linear-gradient(135deg, rgba(255, 200, 0, 0.9), rgba(255, 100, 0, 0.6));
+            border: 1px solid #fff; box-shadow: 0 0 15px #ff4500; z-index: 3200; opacity: 0; pointer-events: none; mix-blend-mode: screen;
+        }
+        .ember-particle {
+            position: absolute; width: 4px; height: 4px; background: #fff; border-radius: 50%;
+            box-shadow: 0 0 5px #ffcc00, 0 0 10px #ff0000; pointer-events: none; z-index: 3600;
+        }
+        @keyframes riseEmber { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-200px) translateX(var(--drift)) scale(0); opacity: 0; } }
+        
+        /* --- CỔNG RỒNG VĂN HÓA (ROYAL BRONZE GATE - DONG SON) --- */
+        #grand-gate {
+            position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3200; 
+            display: flex;
+        }
+        .gate-panel {
+            width: 50%; height: 100%; position: relative;
+            background: radial-gradient(ellipse at center, #2d1f1a 0%, #1a120b 50%, #0d0806 100%);
+            border-top: 15px solid #6b4f3b;
+            border-bottom: 15px solid #6b4f3b;
+            box-shadow: inset 0 0 200px rgba(0,0,0,0.9), inset 0 10px 40px rgba(139,90,43,0.3), inset 0 -10px 40px rgba(139,90,43,0.3), 0 0 100px rgba(0,0,0,0.9);
+            /* Thời gian mở SIÊU CHẬM: 10s */
+            transition: transform 10s cubic-bezier(0.1, 0.7, 0.3, 1); 
+            will-change: transform; overflow: hidden;
+        }
+
+        /* Lớp Họa Tiết Đồng Sơn Chìm */
+        .gate-panel::before {
+            content: ''; position: absolute; inset: 0; opacity: 0.4;
+            background-image: 
+                repeating-radial-gradient(circle at 50% 50%, #4a3428 0px, #4a3428 3px, transparent 4px, transparent 25px),
+                repeating-radial-gradient(circle at 30% 30%, #3e2723 0px, #3e2723 2px, transparent 3px, transparent 40px),
+                repeating-radial-gradient(circle at 70% 70%, #3e2723 0px, #3e2723 2px, transparent 3px, transparent 40px),
+                conic-gradient(from 0deg at 50% 50%, transparent 0deg, #5d4037 8deg, transparent 16deg),
+                linear-gradient(90deg, transparent 48%, #3e2723 49%, #3e2723 51%, transparent 52%),
+                linear-gradient(0deg, transparent 48%, #3e2723 49%, #3e2723 51%, transparent 52%);
+            background-size: 300px 300px, 250px 250px, 250px 250px, 100% 100%, 60px 100%, 100% 60px;
+            background-position: center;
+            background-repeat: repeat, no-repeat, no-repeat, no-repeat, center, center;
+            mix-blend-mode: overlay;
+            animation: subtleShimmer 8s ease-in-out infinite alternate;
+        }
+        @keyframes subtleShimmer { 0% { opacity: 0.35; } 100% { opacity: 0.5; } }
+        
+        .gate-panel::after {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 50% 50%, transparent 0%, rgba(0,0,0,0.7) 70%, rgba(0,0,0,0.95) 100%);
+        }
+        
+        .gate-left { transform: translateX(-105%); border-right: 6px solid #8a6d3b; }
+        .gate-right { transform: translateX(105%); border-left: 6px solid #8a6d3b; }
+
+        /* Đóng nhanh (1.2s) */
+        .gate-closed .gate-left { transform: translateX(0%); transition: transform 1.2s cubic-bezier(0.6, 0, 0.2, 1); }
+        .gate-closed .gate-right { transform: translateX(0%); transition: transform 1.2s cubic-bezier(0.6, 0, 0.2, 1); }
+
+        /* --- ĐẦU RỒNG UY NGHI (ROYAL DRAGON SVG) --- */
+        .dragon-knocker {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            width: 45vw; height: 45vw; max-width: 350px; max-height: 350px;
+            z-index: 20;
+            filter: drop-shadow(10px 15px 10px rgba(0,0,0,0.9)) drop-shadow(-5px -5px 5px rgba(255,255,255,0.05));
+        }
+        .gate-left .dragon-knocker { right: -5%; } 
+        .gate-right .dragon-knocker { left: -5%; transform: translateY(-50%) scaleX(-1); }
+
+        .dk-body { fill: url(#goldGradient); stroke: #2b1d0e; stroke-width: 1px; }
+        .dk-detail { fill: #4e342e; opacity: 0.7; }
+        .dk-eye { fill: #000; animation: eyeGlow 3s infinite alternate; }
+        .dk-ring { fill: none; stroke: url(#goldGradient); stroke-width: 15px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); }
+        
+        @keyframes eyeGlow {
+            0% { fill: #330000; filter: drop-shadow(0 0 0px red); }
+            100% { fill: #ff0000; filter: drop-shadow(0 0 20px red); }
+        }
+
+        /* Sóng xung kích */
+        .gate-shockwave {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
+            width: 100vh; height: 100vh; border-radius: 50%;
+            border: 40px solid #ffcc00; opacity: 0; z-index: 3300; pointer-events: none;
+            mix-blend-mode: screen;
+        }
+        .impact-active .gate-shockwave { animation: shockwaveExpand 1.0s ease-out forwards; }
+        @keyframes shockwaveExpand {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; border-width: 50px; }
+            100% { transform: translate(-50%, -50%) scale(2); opacity: 0; border-width: 0px; }
+        }
+
+        /* Lửa tóe */
+        .spark-impact {
+            position: absolute; width: 5px; height: 80px; background: #fff;
+            top: 50%; left: 50%; transform-origin: center bottom;
+            z-index: 3350; pointer-events: none; opacity: 0;
+            box-shadow: 0 0 20px #ffaa00;
+        }
+
+        /* Khe sáng */
+        .gate-glow {
+            position: absolute; top: 0; left: 50%; width: 12px; height: 100%;
+            background: #fff; box-shadow: 0 0 150px 60px #ffcc00;
+            z-index: 3250; opacity: 0; transform: translateX(-50%); transition: opacity 0.5s;
+        }
+        .gate-closed .gate-glow { opacity: 1; transition-delay: 1.0s; }
+
+        /* Chaos Smoke */
+        .chaos-smoke {
+            position: absolute; border-radius: 50%;
+            background: radial-gradient(circle, rgba(240,240,240,0.8) 0%, rgba(255,255,255,0) 70%);
+            z-index: 3400; pointer-events: none; filter: blur(8px);
+        }
+
+        .tap-to-continue {
+            color: #ffcc00; font-size: 1.2rem; margin-top: 60px; opacity: 0;
+            animation: blinkText 2s infinite; pointer-events: none; text-shadow: 0 0 10px #ff0000;
+        }
+        .tap-visible { opacity: 1; transition: opacity 1s 1s; }
+        @keyframes blinkText { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+        /* --- RESULT SCREEN --- */
+        #result-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.96); z-index: 3000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .result-box {
+            background: var(--blue-box); border: 4px solid var(--gold-color); padding: 5vh 2vw;
+            border-radius: 30px; text-align: center; width: 90vw; max-width: 1200px;
+            transform: rotateX(5deg); box-shadow: 0 30px 80px rgba(0,0,0,1);
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .result-title {
+            font-size: clamp(3rem, 6vw, 5rem); font-weight: 900; margin-bottom: 10px; 
+            color: #ff3333; text-transform: uppercase; text-shadow: 0 0 20px #ff0000;
+            -webkit-text-stroke: 1px #fff;
+        }
+        .result-name {
+            font-size: clamp(2.5rem, 5vw, 4rem); color: #fff; font-weight: 900; 
+            margin: 20px 0; text-transform: uppercase; text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+        }
+        #res-score { font-size: clamp(1.5rem, 3vw, 2.5rem); color: #ccc; margin-bottom: 20px; font-weight: bold; }
+        .result-money { 
+            font-size: clamp(5rem, 15vw, 12rem); font-weight: 900; margin: 30px 0;
+            background: linear-gradient(to bottom, #fff, #ffcc00, #b8860b);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 20px rgba(255, 204, 0, 0.5)); animation: pulseMoney 2s infinite ease-in-out;
+        }
+        @keyframes pulseMoney {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(255, 204, 0, 0.5)); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 40px rgba(255, 204, 0, 0.8)); }
+        }
+
+        #ranking-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 3000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .ranking-table { width: 90vw; border-collapse: collapse; margin: 2vh 0; font-size: var(--font-medium); border: 1px solid var(--gold-color); }
+        .ranking-table th { background: var(--gold-color); color: #000; padding: 15px; }
+        .ranking-table td { border: 1px solid #555; padding: 10px; text-align: center; color: #fff; }
+        
+        #quiz-screen { width: 95vw; height: 100vh; display: flex; flex-direction: column; padding: 2vh 0; z-index: 20; position: relative; }
+        .question-box {
+            background: var(--blue-box); border: 2px solid var(--gold-color); padding: 0 4vw; margin: 0 auto 3vh auto; width: 90vw; flex: 1.2;
+            display: flex; justify-content: center; align-items: center; text-align: center; clip-path: polygon(5% 0%, 95% 0%, 100% 50%, 95% 100%, 5% 100%, 0% 50%);
+        }
+        #question-text { font-size: var(--font-big); font-weight: bold; text-shadow: 2px 2px 0 #000; color: #fff; line-height: 1.3; }
+        .answers-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2vh 4vw; height: 40vh; width: 90vw; margin: 0 auto; }
+        .answer-btn {
+            background: var(--blue-box); color: white; border: none; font-size: var(--font-medium); padding: 0 3vw 0 1vw; cursor: pointer;
+            display: flex; align-items: center; clip-path: polygon(5% 0%, 95% 0%, 100% 50%, 95% 100%, 5% 100%, 0% 50%); transition: opacity 0.5s, visibility 0.5s;
+        }
+        .answer-btn.correct { background: #006400 !important; }
+        .answer-btn.incorrect { background: #550000 !important; }
+        .answer-btn.removed { opacity: 0; visibility: hidden; pointer-events: none; }
 
     </style>
 </head>
 <body>
-
-    <div class="book-container">
-        
-        <div class="slide" id="slide-0">
-            <div class="corner-decor top-left"></div>
-            <div class="corner-decor bottom-right"></div>
-            <div style="display: flex; flex-direction: column; height: 100%; justify-content: center; align-items: center; text-align: center;">
-                <p style="font-size: 3rem; letter-spacing: 5px; margin-bottom: 0; color: var(--accent-color); font-weight: bold;">TỔNG HỢP KIẾN THỨC</p>
-                <h1>MUỐI CỦA RỪNG</h1>
-                <div style="width: 300px; height: 8px; background: var(--highlight-color); margin: 40px auto;"></div>
-                <p style="font-size: 3rem; font-style: italic;">Nguyễn Huy Thiệp</p>
-                <p style="font-size: 1.8rem; margin-top: 30px; color: #555;">(Bấm chuột hoặc nhấn phím mũi tên để lật trang)</p>
-            </div>
-        </div>
-
-        <div class="slide" id="slide-1">
-            <h2>KHỞI ĐỘNG & LIÊN HỆ</h2>
-            <div class="fragment">
-                <details>
-                    <summary>Nêu một số tác phẩm văn học hiện đại có yếu tố kì ảo và cảm nhận về chúng?</summary>
-                    <div class="answer-content">
-                        <p><strong>Tác phẩm:</strong> <em>Tết ở làng địa ngục</em> (Thảo Trang), <em>Vợ chồng A Phủ</em> (Tô Hoài), <em>Chí Phèo</em> (Nam Cao), <em>Làng</em> (Kim Lân).</p>
-                        <p><strong>Cảm nhận (Tết ở làng địa ngục):</strong> Yếu tố kỳ ảo không chỉ tạo nên không khí bí ẩn, rùng rợn mà còn giúp tác giả phản ánh chân thực hiện thực xã hội thông qua các tình tiết liêu trai, ma quái.</p>
-                    </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="slide" id="slide-2">
-            <h2>A. KHÁI QUÁT CHUNG</h2>
-            <div class="fragment">
-                <h3>1. Tác giả: Nguyễn Huy Thiệp</h3>
-                <ul>
-                    <li>(1950 - 2021) là một nhà văn nổi tiếng của văn học Việt Nam hiện đại.</li>
-                    <li>Được biết đến với những truyện ngắn mang tính triết lý sâu sắc.</li>
-                </ul>
-            </div>
-            <div class="fragment">
-                <h3>2. Tác phẩm: Muối của rừng</h3>
-                <ul>
-                    <li>Là một truyện ngắn giàu tính triết lý.</li>
-                    <li>Nằm trong chuỗi các tác phẩm về đề tài đi săn của ông.</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="slide" id="slide-3">
-            <h2>B. PHÂN TÍCH CHI TIẾT</h2>
-            <h3>Luận điểm 1: Hình ảnh ông Diểu ban đầu</h3>
-            <p><em>(Hình ảnh con người khi chưa đối diện với thiên nhiên bằng tâm hồn thức tỉnh - Kẻ đi săn ngạo nghễ).</em></p>
-            <div class="fragment">
-                <ul>
-                    <li><strong>Thái độ:</strong> Tự tin, thậm chí là ngạo nghễ của một người đi săn lão luyện. Xem thiên nhiên là đối tượng tiêu khiển ngày xuân.</li>
-                    <li><strong>Coi thường thiên nhiên:</strong> Trang bị đầy đủ vũ khí, xem việc bắn được con mồi là thành tích. Cái nhìn thực dụng, lạnh lùng.</li>
-                    <li><strong>Dẫn chứng:</strong>
-                        <ul>
-                            <li>Chuẩn bị kỹ càng: Quần áo sốc lại, khẩu súng hai nòng, đạn dược.</li>
-                            <li>Chọn mục tiêu: Ngắm bắn con khỉ đực đầu đàn vì nghĩ bộ lông có giá trị.</li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="slide" id="slide-4">
-            <h2>B. PHÂN TÍCH CHI TIẾT</h2>
-            <h3>Luận điểm 2: Bước ngoặt thức tỉnh</h3>
-            <p><em>(Bi kịch và Tình thương).</em></p>
-            <div class="fragment">
-                <ul>
-                    <li><strong>Sự kiện bắn khỉ:</strong> Ông Diểu bắn trúng khỉ đực. Nhưng bất ngờ thay, khỉ cái không bỏ chạy mà quay lại cứu, khỉ con cũng xuất hiện.</li>
-                    <li><strong>Bối cảnh:</strong> Thiên nhiên lúc này bắt đầu tác động vào tâm trí ông, từ hả hê chuyển sang ngỡ ngàng.</li>
-                    <li><strong>Tình cảm (Thức tỉnh):</strong> Từ tư thế kẻ đi săn, ông chứng kiến "tình người" trong loài vật. Hành động hy sinh của gia đình khỉ khiến ông rung động.</li>
-                    <li><strong>Bi kịch:</strong> Ông nhận ra sự tàn ác của mình. Bi kịch của kẻ chiến thắng nhưng thua cuộc về đạo đức.</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="slide" id="slide-5">
-            <h2>B. PHÂN TÍCH CHI TIẾT</h2>
-            <h3>Luận điểm 2 (Tiếp): Sự dao động</h3>
-            <div class="fragment">
-                <ul>
-                    <li><strong>Tâm trạng giằng xé:</strong> Giữa Bản năng sát thủ (muốn giết nốt) và Lương tri (thương xót, hối hận).</li>
-                    <li><strong>Hành động trái ngược:</strong> Ông chửi thề, tức giận để che giấu sự yếu đuối, nhưng hành động lại đi ngược lại: Ông không giết con khỉ bị thương mà xé áo băng bó cho nó.</li>
-                    <li><strong>Kết quả:</strong> Ông quyết định phóng sinh con khỉ, vứt bỏ cả quần áo, súng đạn để trở về trần trụi nhưng thanh thản.</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="slide" id="slide-6">
-            <h2>B. PHÂN TÍCH CHI TIẾT</h2>
-            <h3>Luận điểm 3: Sự tái sinh trong nhận thức</h3>
-            <div class="fragment">
-                <h4>1. Sự thay đổi trong hành động (dấu hiệu sám hối)</h4>
-                <ul>
-                    <li>Từ kẻ săn bắt → trở nên chần chừ, run rẩy trước hành động bạo lực của chính mình.</li>
-                    <li>Khi bắn con khỉ đực, "chân tay ông run ra", cảm thấy tội lỗi và ghê sợ hành động của mình.</li>
-                    <li>Ông Diêu không còn coi thú rừng là đối tượng giết hại mà nhìn chúng như "đồng loại".</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="slide" id="slide-7">
-            <h2>B. PHÂN TÍCH CHI TIẾT</h2>
-            <h3>Luận điểm 3 (Tiếp): Tái sinh & Kết quả</h3>
-            <div class="fragment">
-                <h4>2. Hành động mang tính biểu tượng</h4>
-                <ul>
-                    <li><strong>Hét lên "Chạy đi!":</strong> Lần đầu tiên đứng về phía thú rừng.</li>
-                    <li><strong>Ném súng:</strong> Biểu tượng từ bỏ bạo lực, quyền lực hủy diệt.</li>
-                    <li><strong>Khỉ kéo súng đi:</strong> Thiên nhiên "kéo đi" cái ác, trả lại sự trong sạch cho con người.</li>
-                </ul>
-            </div>
-            <div class="fragment">
-                <h4>3. Kết quả tái sinh</h4>
-                <ul>
-                    <li>Ông Diêu nhận ra bản chất thiện lương của mình.</li>
-                    <li>Học được bài học về tình yêu thương và sự hy sinh từ loài vật.</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="slide" id="slide-8">
-            <h2>C. LUYỆN TẬP</h2>
-            <div class="fragment">
-                <details>
-                    <summary>Câu 1: Giữa nhan đề "Muối của rừng" và nội dung câu chuyện có liên hệ với nhau như thế nào?</summary>
-                    <div class="answer-content">
-                        <ul>
-                            <li>Tiêu đề không ngẫu nhiên, chứa đựng ý nghĩa sâu xa.</li>
-                            <li>Là cảnh báo về sự phức tạp và những bí ẩn trong rừng sâu.</li>
-                            <li>Cái tên là thước đo cho sự bí ẩn, sức mạnh của tự nhiên.</li>
-                            <li>Lời nhắc nhở về việc không ngừng khám phá và học hỏi trong cuộc sống.</li>
-                        </ul>
-                    </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="slide" id="slide-9">
-            <h2>C. LUYỆN TẬP</h2>
-            <div class="fragment">
-                <details>
-                    <summary>Câu 2: Tóm tắt hành trình trải nghiệm và nhận thức của ông Diểu?</summary>
-                    <div class="answer-content">
-                        <ul>
-                            <li><strong>Niềm vui, háo hức:</strong> Đi vào rừng với tinh thần phấn khích.</li>
-                            <li><strong>Gặp đàn khỉ:</strong> Kích động, tò mò.</li>
-                            <li><strong>Bắn chết khỉ đực:</strong> Bạo lực -> Hối tiếc, hỗn loạn.</li>
-                            <li><strong>Quan sát khỉ cái:</strong> Thấy tình cảm gia đình -> Suy ngẫm.</li>
-                            <li><strong>Bị tấn công & Chiến đấu:</strong> Đối mặt nguy hiểm.</li>
-                            <li><strong>Kết thúc:</strong> Mất đi niềm vui ban đầu nhưng thức tỉnh với sự hiểu biết mới.</li>
-                        </ul>
-                    </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="slide" id="slide-10">
-            <h2>C. LUYỆN TẬP</h2>
-            <div class="fragment">
-                <details>
-                    <summary>Câu 3: Ý nghĩ của ông Diểu khi chứng kiến đời sống đàn khỉ? Bạn có đồng tình?</summary>
-                    <div class="answer-content">
-                        <p>Ông rung động trước tình cảm gắn bó của loài vật. Điều này gợi nhắc tầm quan trọng của việc tôn trọng sự sống muôn loài và nâng cao ý thức bảo vệ môi trường.</p>
-                    </div>
-                </details>
-            </div>
-            <div class="fragment">
-                <details>
-                    <summary>Câu 4: Sự thay đổi của ông Diểu tại Hõm Chết?</summary>
-                    <div class="answer-content">
-                        <ul>
-                            <li>Từ coi thiên nhiên là tài nguyên -> Nhận thức là bạn đồng hành.</li>
-                            <li>Từ thói quen săn bắn thú vui -> Ý thức bảo vệ.</li>
-                            <li>Từ vô cảm -> Lòng tin và sự cảm thông.</li>
-                        </ul>
-                    </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="slide" id="slide-11">
-            <h2>C. LUYỆN TẬP</h2>
-            <div class="fragment">
-                <details>
-                    <summary>Câu 5: Ý nghĩa chi tiết "hoa tử huyền" cuối truyện?</summary>
-                    <div class="answer-content">
-                        <p>Là yếu tố nghệ thuật quan trọng. Biểu tượng cho <strong>sự hy vọng về tái sinh</strong>, vẻ đẹp thuần khiết và sự thức tỉnh lương tri (hoa nở khi ông Diểu trở về tay trắng).</p>
-                    </div>
-                </details>
-            </div>
-            <div class="fragment">
-                <details>
-                    <summary>Câu 6: Phân tích sự tương phản của ông Diểu (Đầu vs Cuối)?</summary>
-                    <div class="answer-content">
-                        <ul>
-                            <li><strong>Đầu:</strong> Thợ săn già nua, lam lũ nhưng tự tin, lão luyện.</li>
-                            <li><strong>Cuối:</strong> "Trần truồng", "lấm lem", yếu đuối, bị động.</li>
-                            <li><strong>Thông điệp:</strong> Bài học quý giá về bảo vệ thiên nhiên: Để hòa hợp, con người đôi khi phải trút bỏ những vỏ bọc văn minh giả tạo.</li>
-                        </ul>
-                    </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="slide" id="slide-12">
-            <h2>C. LUYỆN TẬP</h2>
-            <div class="fragment">
-                <details>
-                    <summary>Câu 7: Yếu tố kì ảo trong "Muối của rừng" khác gì "Đền thiêng cửa bể"?</summary>
-                    <div class="answer-content">
-                        <p>Cả hai đều dùng yếu tố kỳ ảo. Tuy nhiên:</p>
-                        <ul>
-                            <li><strong>Muối của rừng:</strong> Kì ảo mang tính biểu tượng, triết lý, hướng nội (hoa tử huyền, khỉ biến mất).</li>
-                            <li><strong>Đền thiêng cửa bể:</strong> Kì ảo mang màu sắc lịch sử, huyền thoại, tâm linh để phản ánh số phận con người.</li>
-                        </ul>
-                    </div>
-                </details>
-            </div>
-        </div>
-
-        <div class="slide" id="slide-13">
-            <h2>TỔNG KẾT</h2>
-            <div class="fragment">
-                <h3>1. Nội dung</h3>
-                <p>Tác phẩm là lời cảnh tỉnh về mối quan hệ giữa con người và thiên nhiên. Con người cần tôn trọng, yêu thương và sống hòa hợp với tự nhiên để tìm thấy sự thanh thản.</p>
-            </div>
-            <div class="fragment">
-                <h3>2. Nghệ thuật</h3>
-                <p>Xây dựng tình huống truyện độc đáo, miêu tả tâm lý nhân vật tinh tế, sử dụng nhiều chi tiết mang tính biểu tượng sâu sắc.</p>
-            </div>
-        </div>
-
-        <div class="slide" id="slide-14">
-            <div style="display: flex; flex-direction: column; height: 100%; justify-content: center; align-items: center; text-align: center;">
-                <h1>CẢM ƠN ĐÃ LẮNG NGHE</h1>
-                <p><em>"Muối của rừng chính là sự kết tinh của lòng nhân ái."</em></p>
-                
-                <div style="margin-top: 60px; display: flex; gap: 30px;">
-                    <button onclick="location.reload()" class="end-btn">
-                        ⟳ Về Trang Đầu
-                    </button>
-                    
-                    <a href="https://vuhoanghai208.github.io/van_thuyet_trinh/" class="end-btn" style="background: #3e2723; border-color: #3e2723;">
-                        🎮 Chuyển Đến Trò Chơi
-                    </a>
-                </div>
-            </div>
-        </div>
-
+    <div id="bg-3d" class="bg-3d-container"></div>
+    <div id="lightning-container"></div> <div id="flash-screen" class="flash-overlay"></div>
+    
+    <div class="btn-fullscreen" onclick="toggleFullScreen()" title="Toàn màn hình">
+        <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
     </div>
 
-    <div class="page-number">Trang <span id="page-num">1</span> / 16</div>
+    <div id="grand-gate">
+        <div class="gate-panel gate-left">
+            <svg class="dragon-knocker" viewBox="0 0 200 200">
+                <defs>
+                    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#f2d06b;stop-opacity:1" />
+                        <stop offset="50%" style="stop-color:#b8860b;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#704214;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <circle cx="100" cy="130" r="40" class="dk-ring" />
+                <path class="dk-body" d="M50,50 L70,30 L100,10 L130,30 L150,50 L160,90 L140,120 L100,140 L60,120 L40,90 Z" />
+                <path class="dk-body" d="M50,50 Q30,20 40,0 M150,50 Q170,20 160,0" stroke-width="5" fill="none" />
+                <path class="dk-eye" d="M65,70 L85,65 L85,75 Z" />
+                <path class="dk-eye" d="M135,70 L115,65 L115,75 Z" />
+                <path class="dk-detail" d="M90,100 Q100,110 110,100 L100,90 Z" />
+                <path class="dk-detail" d="M80,120 Q100,130 120,120" stroke="#3e2723" stroke-width="4" fill="none"/>
+            </svg>
+        </div>
+        <div class="gate-panel gate-right">
+            <svg class="dragon-knocker" viewBox="0 0 200 200">
+                <defs>
+                    <linearGradient id="goldGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#f2d06b;stop-opacity:1" />
+                        <stop offset="50%" style="stop-color:#b8860b;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#704214;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <circle cx="100" cy="130" r="40" class="dk-ring" style="stroke:url(#goldGradient2)" />
+                <path class="dk-body" style="fill:url(#goldGradient2)" d="M50,50 L70,30 L100,10 L130,30 L150,50 L160,90 L140,120 L100,140 L60,120 L40,90 Z" />
+                <path class="dk-body" style="stroke:url(#goldGradient2)" d="M50,50 Q30,20 40,0 M150,50 Q170,20 160,0" stroke-width="5" fill="none" />
+                <path class="dk-eye" d="M65,70 L85,65 L85,75 Z" />
+                <path class="dk-eye" d="M135,70 L115,65 L115,75 Z" />
+                <path class="dk-detail" d="M90,100 Q100,110 110,100 L100,90 Z" />
+                <path class="dk-detail" d="M80,120 Q100,130 120,120" stroke="#3e2723" stroke-width="4" fill="none"/>
+            </svg>
+        </div>
+        <div class="gate-glow"></div>
+        <div class="gate-shockwave"></div>
+    </div>
+
+    <a href="ket_thuc.html" class="btn-next-external" target="_blank" title="Chuyển web">NEXT &#10148;</a>
+    
+    <audio id="sound-bg" loop><source src="https://www.soundjay.com/misc/sounds/wind-chime-1.mp3" type="audio/mpeg"></audio>
+    <audio id="sound-correct"><source src="https://www.soundjay.com/human/sounds/applause-01.mp3" type="audio/mpeg"></audio>
+    <audio id="sound-boom"><source src="https://www.soundjay.com/mechanical/sounds/glass-break-1.mp3" type="audio/mpeg"></audio>
+    <audio id="sound-wrong"><source src="https://www.soundjay.com/misc/sounds/fail-buzzer-01.mp3" type="audio/mpeg"></audio>
+    <audio id="sound-slam"><source src="https://www.soundjay.com/human/sounds/footstep-concrete-jump-1.mp3" type="audio/mpeg"></audio>
+    <audio id="sound-whoosh"><source src="https://www.soundjay.com/nature/sounds/whip-whoosh-01.mp3" type="audio/mpeg"></audio>
+
+    <div id="spinner-screen" class="screen-container slide-center">
+        <h1 style="color: var(--gold-color); font-size: var(--font-huge); text-shadow: 0 5px 10px #000; margin: 0; transform: translateZ(50px);">AI LÀ TRIỆU PHÚ</h1>
+        <div class="wheel-wrapper-3d" id="wheel-wrapper">
+            <div class="wheel-container"><div class="wheel-pointer"></div><ul id="names-list"></ul></div>
+        </div>
+        <button class="btn-action" id="spin-btn" onclick="spinWheel()">QUAY NGAY</button>
+    </div>
+
+    <div id="winner-overlay" class="is-hidden">
+        <h2 style="color: #aaa; font-size: var(--font-medium); margin-bottom: 50px; opacity: 0.8;">NGƯỜI ĐƯỢC CHỌN</h2>
+        <div id="winner-name-container">
+            <div id="winner-name-big">TÊN</div>
+            <div id="shockwave" class="winner-shockwave"></div>
+            <div id="cracks-container" style="position: absolute; top: 50%; left: 50%; width: 0; height: 0;"></div>
+        </div>
+        <div id="tap-guide" class="tap-to-continue">CHẠM VÀO MÀN HÌNH ĐỂ TIẾP TỤC</div>
+    </div>
+
+    <div id="ranking-overlay" class="is-hidden">
+        <h1 style="color: var(--gold-color); font-size: var(--font-big);">🏆 BẢNG VINH DANH 🏆</h1>
+        <table class="ranking-table">
+            <thead><tr><th>Hạng</th><th>Tên</th><th>Kết quả</th><th>Tiền thưởng</th></tr></thead>
+            <tbody id="ranking-body"></tbody>
+        </table>
+        <div>
+            <button class="btn-action" onclick="startFromRanking()">VÀO GAME</button>
+            <button class="btn-action btn-secondary" onclick="resetRanking()">RESET BẢNG</button>
+            <button class="btn-action btn-secondary" onclick="clearPlayHistory()">RESET TỶ LỆ</button>
+        </div>
+    </div>
+
+    <div id="money-screen" class="screen-container is-hidden">
+        <div class="money-card" id="money-card-container">
+            <div class="money-scroll-wrapper">
+                <ul class="money-list" id="money-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="quiz-screen" class="screen-container is-hidden">
+        <div style="width:100%; display:flex; justify-content:flex-end; padding-right:2vw;">
+            <button id="btn-5050" class="btn-action" style="border-radius:50%; width:80px; height:80px; padding:0; display:flex; align-items:center; justify-content:center;" onclick="use5050()">50:50</button>
+        </div>
+        <div class="question-box"><div id="question-text">...</div></div>
+        <div class="answers-grid" id="answers-container"></div>
+    </div>
+
+    <div id="result-overlay" class="is-hidden">
+        <div class="result-box">
+            <div class="result-title" id="res-title">...</div>
+            <div class="result-name" id="res-name">...</div>
+            <div id="res-score">...</div>
+            <div class="result-money" id="res-money">0</div>
+            <button class="btn-action" onclick="location.reload()">VỀ TRANG CHỦ</button>
+        </div>
+    </div>
 
     <script>
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.slide');
-        const pageNum = document.getElementById('page-num');
+        // --- FULL SCREEN LOGIC ---
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
 
-        // --- KHỞI TẠO Z-INDEX ---
-        function initZIndex() {
-            slides.forEach((slide, index) => {
-                slide.style.zIndex = 100 - index; 
-                slide.style.display = 'block'; 
-                slide.classList.remove('flipped', 'active');
+        const names = ["Thuý Anh", "Kỳ Anh", "Việt Anh", "Phương Anh", "Bắc", "Cúc", "Dung", "Đăng", "Hà", "Hiệp", "Hồng", "Nguyễn Huy", "Dương Hương", "Kiều", "Lan", "Hoàng Ly", "Nguyễn Ly", "Trà Mai", "Xuân Mai", "Minh", "Nam", "Niên", "Nguyễn Phương", "Vũ Phương", "Thanh", "Thành", "Thu", "Thùy", "Thúy", "Trưởng", "Tuyên", "Tuyết"];
+        const baseMoneyLevels = ["200.000", "400.000", "600.000", "1.000.000", "2.000.000", "3.000.000", "6.000.000", "10.000.000", "14.000.000", "22.000.000", "30.000.000", "40.000.000", "60.000.000", "85.000.000", "150.000.000"];
+        let moneyLevels = [], safeLevels = []; 
+        const questionsData = [
+            { q: "Tác phẩm “Muối của rừng” được viết bởi tác giả nào?", o: ["Tô Hoài", "Nguyễn Minh Châu", "Nguyễn Huy Thiệp", "Ma Văn Kháng"], c: 2 },
+            { q: "Nghề nghiệp của ông Diểu là gì?", o: ["Chăn thả gia súc", "Làm nương rẫy", "Đi săn", "Làm gỗ"], c: 2 },
+            { q: "Loài vật xuất hiện trong truyện là gì?", o: ["Khỉ", "Vượn", "Hổ", "Nai"], c: 1 },
+            { q: "Sự kiện mở đầu truyện là gì?", o: ["Trận cháy rừng", "Ông Diểu về bản", "Ông Diểu gặp con vượn đực", "Vượn cái cứu ông Diểu"], c: 2 },
+            { q: "Vì sao con vượn đực chết?", o: ["Bị thú rừng tấn công", "Bị lửa thiêu", "Bị người dân bắn", "Bị ông Diểu bắn nhầm"], c: 3 },
+            { q: "Con vượn cái đã làm gì khi thấy con vượn đực chết?", o: ["Tấn công ông Diểu", "Tru lên đau đớn và ôm xác bạn", "Bỏ chạy vào rừng", "Kêu gọi đàn vượn khác"], c: 1 },
+            { q: "Con vượn cái đã phá điều gì của ông Diểu?", o: ["Lều trú", "Hòm đồ", "Bẫy thú", "Súng"], c: 2 },
+            { q: "Cao trào của truyện là sự kiện nào?", o: ["Con vượn cái phá bẫy", "Cháy rừng và vượn cứu người", "Ông Diểu đặt bẫy", "Vượn cái nhìn ông Diểu"], c: 1 },
+            { q: "“Muối của rừng” trong truyện có ý nghĩa biểu tượng cho:", o: ["Thức ăn của thú rừng", "Bệnh rừng", "Giá trị tinh thần từ thiên nhiên", "Một loại cây đặc biệt"], c: 2 },
+            { q: "Truyện ngắn thuộc thể loại:", o: ["Hồi kí", "Tùy bút", "Truyện ngắn hiện đại", "Kí sự"], c: 2 },
+            { q: "Hành động phá bẫy của vượn cái thể hiện điều gì?", o: ["Sự thù hằn muốn giết người", "Sự thông minh và cảnh báo", "Sự hoảng loạn", "Bản năng sinh tồn"], c: 1 },
+            { q: "Vì sao ông Diểu cảm thấy tội lỗi?", o: ["Vì mất đồ", "Vì nghĩ mình đặt bẫy sai", "Vì bắn chết con vượn đực vô cớ", "Vì bị vượn cái theo dõi"], c: 2 },
+            { q: "Trong truyện, thiên nhiên được khắc họa chủ yếu bằng biện pháp nào?", o: ["Nhân hóa", "So sánh", "Hoán dụ", "Nói quá"], c: 0 },
+            { q: "Sự hi sinh của vượn cái cho thấy phẩm chất gì?", o: ["Con vật có lòng bao dung", "Con vật ngu ngốc", "Con vật hung hãn", "Con vật thích báo thù"], c: 0 },
+            { q: "Tư tưởng chủ đạo của tác phẩm là gì?", o: ["Khuyên con người ăn chay", "Phê phán các thợ săn", "Tôn vinh muối của rừng", "Ca ngợi thiên nhiên và lương tri"], c: 3 },
+            { q: "Ý nghĩa của tình huống truyện “con vật cứu kẻ giết bạn mình”:", o: ["Tạo không khí hài hước", "Tạo bước ngoặt nhận thức", "Làm tăng số lượng nhân vật", "Kéo dài diễn biến"], c: 1 },
+            { q: "Vì sao rừng được gọi là “một thế giới vừa gắn bó vừa xa lạ”?", o: ["Vì ông Diểu không hiểu hết rừng", "Vì rừng không có sự sống", "Vì rừng luôn chào đón con người", "Vì rừng toàn thú dữ"], c: 0 },
+            { q: "Hình ảnh vượn cái nhìn ông Diểu từ xa mang ý nghĩa:", o: ["Rình tấn công", "Muốn kết bạn", "Sự đau đớn và trách móc", "Sợ hãi"], c: 2 },
+            { q: "Tại sao truyện có tên “Muối của rừng”?", o: ["Vì rừng có muối thật", "Vì muối là thức ăn cho thú", "Tượng trưng cho giá trị nhân bản", "Vì ông Diểu đi lấy muối"], c: 2 },
+            { q: "Truyện khắc họa sự đổi thay nào ở ông Diểu?", o: ["Từ tự tin → kiêu ngạo", "Từ vô cảm → nhân tính", "Từ yếu đuối → mạnh mẽ", "Từ giận dữ → vui vẻ"], c: 1 },
+            { q: "Bài học lớn nhất mà ông Diểu nhận ra là gì?", o: ["Rừng nhiều thú dữ", "Người thợ săn phải bắn chính xác", "Thiên nhiên có tình nghĩa", "Không nên đi rừng một mình"], c: 2 },
+            { q: "Nếu thiếu tình huống con vượn cứu người, truyện mất yếu tố gì?", o: ["Cao trào và giá trị nhân văn", "Sự xuất hiện của dân bản", "Mâu thuẫn kịch tính", "Miêu tả rừng"], c: 0 },
+            { q: "Tác phẩm gửi đến thông điệp nào cho con người?", o: ["Cần mạnh mẽ trước thiên nhiên", "Sống hòa hợp, tôn trọng muôn loài", "Săn bắt để tồn tại", "Nên dùng nhiều bẫy hơn"], c: 1 },
+            { q: "Sự đối lập giữa “giết” và “cứu” nhằm nhấn mạnh:", o: ["Sự may mắn của ông Diểu", "Quy luật báo ứng", "Sức mạnh của lòng bao dung", "Quy luật tự nhiên"], c: 2 },
+            { q: "Vượn cái có thể được xem như biểu tượng của:", o: ["Sự trả thù của tự nhiên", "Sự hủy diệt thiên nhiên", "Lòng nhân ái của thiên nhiên", "Sự hoảng loạn của loài vật"], c: 2 },
+            { q: "Hành động vượn cái phá bẫy có thể hiểu là:", o: ["Lời cảnh báo cho ông Diểu", "Muốn phá rừng", "Tính nghịch ngợm của vượn", "Sự nông nổi của nó"], c: 0 },
+            { q: "Chọn nhận xét đúng nhất về nhân vật ông Diểu:", o: ["Ông là người độc ác", "Ông vô cảm từ đầu đến cuối", "Biết thức tỉnh và hối lỗi", "Ông thù hằn loài vượn"], c: 2 },
+            { q: "Dòng nào nói đúng nhất về ý nghĩa của truyện?", o: ["Khẳng định sức mạnh con người", "Sự giao cảm người và thiên nhiên", "Phê phán thú dữ rừng xanh", "Ca ngợi săn bắn"], c: 1 },
+            { q: "Chi tiết vượn cái hi sinh cho thấy thông điệp gì?", o: ["Rừng cần được bảo vệ", "Rừng không quan trọng", "Rừng nên bị khai thác nhanh hơn", "Rừng chỉ dành cho thú"], c: 0 },
+            { q: "Tên truyện “Muối của rừng” giúp hiểu rằng:", o: ["Thiên nhiên có vị mặn thật", "Rừng là nơi nguy hiểm", "Rừng dạy giá trị tinh thần bền vững", "Đi rừng phải mang theo muối"], c: 2 }
+        ];
+
+        let currentPlayer = "", currentQIndex = -1, currentQuestions = [], isLocked = false, sparkInterval, emberInterval;
+        let isWinnerWaitState = false; 
+
+        function getPlayedHistory() { return JSON.parse(localStorage.getItem('altp_played_history') || '{}'); }
+        function savePlayedHistory(h) { localStorage.setItem('altp_played_history', JSON.stringify(h)); }
+        function clearPlayHistory() { localStorage.removeItem('altp_played_history'); alert("Đã reset tỷ lệ!"); }
+        function pickWinnerWithWeight() {
+            const history = getPlayedHistory();
+            let weightedPool = [];
+            names.forEach(name => {
+                let count = history[name] || 0;
+                let tickets = (count === 0) ? 50 : 1;
+                for(let i = 0; i < tickets; i++) weightedPool.push(name);
             });
-            slides[0].classList.add('active');
+            const winner = weightedPool[Math.floor(Math.random() * weightedPool.length)];
+            history[winner] = (history[winner] || 0) + 1;
+            savePlayedHistory(history);
+            return winner;
+        }
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
         }
 
-        function updatePageNum() {
-            pageNum.textContent = "Trang " + (currentSlide + 1) + " / " + slides.length;
+        function generateMoneyLevels() {
+            const totalQ = questionsData.length;
+            moneyLevels = [];
+            for(let i = 0; i < totalQ; i++) {
+                if (i < baseMoneyLevels.length) {
+                    moneyLevels.push(baseMoneyLevels[i]);
+                } else {
+                    let lastVal = parseInt(baseMoneyLevels[baseMoneyLevels.length - 1].replace(/\./g, ''));
+                    let newVal = lastVal + ((i - baseMoneyLevels.length + 1) * 50000000);
+                    moneyLevels.push(newVal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+                }
+            }
+            safeLevels = []; for(let i = 4; i < totalQ; i+=5) safeLevels.push(i);
         }
 
-        // --- XỬ LÝ NEXT ---
-        function handleNext() {
-            if (currentSlide >= slides.length - 1) return;
-
-            const currentSlideEl = slides[currentSlide];
-            const hiddenFragments = currentSlideEl.querySelectorAll('.fragment:not(.visible)');
-            
-            // Nếu còn nội dung ẩn -> Hiện nội dung trước
-            if (hiddenFragments.length > 0) {
-                hiddenFragments[0].classList.add('visible');
-            } else {
-                // Hết nội dung -> Lật trang
-                goToSlide(currentSlide + 1);
+        function initBackground3D() {
+            const container = document.getElementById('bg-3d');
+            for(let i=0; i<15; i++) {
+                const cube = document.createElement('div'); cube.className = 'cube-floater';
+                const size = Math.random() * 50 + 20; cube.style.width = size + 'px'; cube.style.height = size + 'px';
+                cube.style.left = Math.random() * 100 + 'vw'; cube.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                cube.style.animationDelay = (Math.random() * -20) + 's'; container.appendChild(cube);
             }
         }
 
-        // --- XỬ LÝ PREV ---
-        function handlePrev() {
-            if (currentSlide <= 0) return;
-            goToSlide(currentSlide - 1);
+        function init() {
+            initBackground3D(); generateMoneyLevels();
+            const ul = document.getElementById('names-list'); ul.innerHTML = ''; 
+            for(let i=0; i<5; i++) names.forEach(n => { let li = document.createElement('li'); li.textContent = n; ul.appendChild(li); });
+            const ml = document.getElementById('money-list'); ml.innerHTML = '';
+            moneyLevels.forEach((m, i) => {
+                let li = document.createElement('li'); li.innerHTML = `<span class="money-idx">${i+1}</span> <span class="money-val">${m}</span>`;
+                li.dataset.idx = i; if(safeLevels.includes(i)) li.classList.add('safe'); ml.appendChild(li);
+            });
+            if(!localStorage.getItem('altp_ranking')) localStorage.setItem('altp_ranking', '[]');
         }
+        init();
 
-        // --- HÀM LẬT TRANG 3D ---
-        function goToSlide(n) {
-            if (n < 0 || n >= slides.length) return;
-
-            if (n > currentSlide) { // TIẾN
-                const oldSlide = slides[currentSlide];
-                const newSlide = slides[n];
-
-                oldSlide.classList.add('flipped');
-                oldSlide.classList.remove('active');
-                
-                newSlide.classList.add('active');
-                newSlide.classList.remove('flipped');
-            } else { // LÙI
-                const oldSlide = slides[currentSlide];
-                const newSlide = slides[n];
-
-                oldSlide.classList.remove('active');
-                
-                newSlide.classList.remove('flipped'); // Quan trọng: Bỏ class flipped để trang quay về
-                newSlide.classList.add('active');
+        // HÀM TIỆN ÍCH: DỪNG RUNG & SÉT
+        function stopShaking() {
+            document.body.classList.remove('rumble-active');
+            document.body.classList.remove('screen-explode-shake');
+            document.getElementById('lightning-container').innerHTML = ''; // Xóa sét
+            const gate = document.getElementById('grand-gate');
+            if(gate) {
+                gate.classList.remove('impact-active');
+                gate.classList.remove('gate-closed'); 
             }
-            currentSlide = n;
-            updatePageNum();
         }
 
-        // --- SỰ KIỆN CLICK ---
-        document.addEventListener('click', function(event) {
-            if (event.target.closest('details') || event.target.closest('button') || event.target.closest('a')) return;
+        /* --- TẠO SÉT (LIGHTNING) --- */
+        function spawnLightningBolt() {
+            const container = document.getElementById('lightning-container');
+            // Tạo tọa độ ngẫu nhiên cho sét
+            let pathData = `M ${Math.random() * 100} 0`; // Điểm bắt đầu
+            let steps = 10;
+            let currentX = Math.random() * 100;
+            let currentY = 0;
             
-            if (event.clientX < window.innerWidth * 0.2) {
-                handlePrev();
-            } else {
-                handleNext();
+            for (let i = 1; i <= steps; i++) {
+                currentY += 100 / steps;
+                currentX += (Math.random() - 0.5) * 30; // Gãy khúc ngẫu nhiên
+                pathData += ` L ${currentX} ${currentY}`;
+            }
+
+            const svgNS = "http://www.w3.org/2000/svg";
+            const svg = document.createElementNS(svgNS, "svg");
+            svg.setAttribute("class", "lightning-bolt");
+            svg.setAttribute("viewBox", "0 0 100 100");
+            svg.setAttribute("preserveAspectRatio", "none");
+
+            const path = document.createElementNS(svgNS, "path");
+            path.setAttribute("d", pathData);
+            path.setAttribute("vector-effect", "non-scaling-stroke"); // Giữ độ dày nét
+
+            svg.appendChild(path);
+            container.appendChild(svg);
+
+            // Tự xóa sau khi chớp tắt
+            setTimeout(() => { svg.remove(); }, 200); 
+        }
+
+        function triggerLightningStorm() {
+            // Đánh 5-8 tia sét ngẫu nhiên trong 1 giây
+            let stormInterval = setInterval(() => {
+                spawnLightningBolt();
+            }, 100);
+
+            setTimeout(() => { clearInterval(stormInterval); }, 800);
+        }
+
+        function spinWheel() {
+            document.getElementById('spin-btn').disabled = true;
+            try { document.getElementById('sound-bg').play(); } catch(e){}
+            currentPlayer = pickWinnerWithWeight();
+            const nameIndexInArray = names.indexOf(currentPlayer);
+            const stopSetIndex = 3; const finalIndex = (stopSetIndex * names.length) + nameIndexInArray;
+            const wheelContainer = document.querySelector('.wheel-container'); wheelContainer.classList.add('spinning');
+            sparkInterval = setInterval(createSpinSparks, 40); 
+            const itemHeight = wheelContainer.clientHeight / 5; 
+            const stopPos = (finalIndex * itemHeight) - (wheelContainer.clientHeight / 2) + (itemHeight / 2);
+            const ul = document.getElementById('names-list');
+            ul.style.transition = 'transform 6s cubic-bezier(0.25, 0.1, 0.25, 1)'; ul.style.transform = `translateY(-${stopPos}px)`;
+            setTimeout(() => {
+                clearInterval(sparkInterval); document.getElementById('sound-bg').pause();
+                wheelContainer.classList.remove('spinning'); celebrateWinner(currentPlayer);
+            }, 6100); 
+        }
+
+        function createSpinSparks() {
+            const wrapper = document.getElementById('wheel-wrapper'); const rect = wrapper.getBoundingClientRect();
+            for(let i=0; i < 4; i++) {
+                const spark = document.createElement('div'); spark.className = 'spark-spin';
+                const isLeft = Math.random() > 0.5; const startX = isLeft ? rect.width * 0.15 : rect.width * 0.85; const startY = rect.height/2 + (Math.random() * 30 - 15);
+                spark.style.left = startX + 'px'; spark.style.top = startY + 'px';
+                const angle = (isLeft ? 0 : Math.PI) + (Math.random() * Math.PI/3 - Math.PI/6);
+                spark.style.transform = `rotate(${angle}rad)`; wrapper.appendChild(spark);
+                spark.animate([{ transform: `translate(0,0) rotate(${angle}rad) scale(1)`, opacity: 1 }, { transform: `translate(${Math.cos(angle)*300}px, ${Math.sin(angle)*300}px) rotate(${angle}rad) scale(0)`, opacity: 0 }], { duration: 400 }).onfinish = () => spark.remove();
+            }
+        }
+        function createSteamEffect(element) {
+            const rect = element.getBoundingClientRect(); const container = document.getElementById('money-screen');
+            for(let i=0; i<10; i++) {
+                const puff = document.createElement('div'); puff.className = 'steam-puff';
+                puff.style.left = (rect.left + rect.width/2) + 'px'; puff.style.top = (rect.top + rect.height/2) + 'px';
+                container.appendChild(puff);
+                puff.animate([{ transform: 'translate(-50%,-50%) scale(0)', opacity: 0.8 }, { transform: `translate(${Math.random()*100-50}px, ${Math.random()*100-50}px) scale(2)`, opacity: 0 }], { duration: 800 }).onfinish = () => puff.remove();
+            }
+        }
+        function createLadderSparks(rect) {
+            const container = document.getElementById('money-screen');
+            for(let i=0; i<30; i++) {
+                const spark = document.createElement('div'); spark.className = 'ladder-spark';
+                const offsetX = Math.random() * rect.width;
+                spark.style.left = (rect.left + offsetX) + 'px'; spark.style.top = rect.bottom + 'px';
+                container.appendChild(spark);
+                const angle = (Math.PI / 2) + (Math.random() * 1 - 0.5); 
+                const velocity = Math.random() * 150 + 50;
+                spark.animate([{ transform: 'translate(0,0) scale(1)', opacity: 1 }, { transform: `translate(${Math.cos(angle)*velocity}px, ${Math.sin(angle)*velocity}px) scale(0)`, opacity: 0 }], { duration: 500 }).onfinish = () => spark.remove();
+            }
+        }
+        function createGlassShards() {
+            const container = document.getElementById('cracks-container'); container.innerHTML = ''; 
+            for(let i=0; i<30; i++) {
+                const shard = document.createElement('div'); shard.className = 'glass-shard';
+                container.appendChild(shard);
+                const size = Math.random()*80+40; shard.style.width=size+'px'; shard.style.height=size+'px';
+                const p1=`${Math.random()*50}% ${Math.random()*50}%`, p2=`${50+Math.random()*50}% ${Math.random()*50}%`, p3=`${50+Math.random()*50}% ${50+Math.random()*50}%`, p4=`${Math.random()*50}% ${50+Math.random()*50}%`;
+                shard.style.clipPath=`polygon(${p1},${p2},${p3},${p4})`;
+                const angle=Math.random()*6.28, vel=Math.random()*450+150;
+                shard.animate([{transform:`translate(-50%,-50%) scale(0.2)`, opacity:0}, {transform:`translate(calc(-50% + ${Math.cos(angle)*vel}px), calc(-50% + ${Math.sin(angle)*vel}px)) scale(1) rotate(${Math.random()*360}deg)`, opacity:1}], {duration:700, fill:'forwards'});
+            }
+        }
+        function spawnEmbers() {
+            if(!isWinnerWaitState) return;
+            const c = document.getElementById('winner-name-container');
+            const ember = document.createElement('div'); ember.className = 'ember-particle';
+            ember.style.left = `calc(50% + ${Math.random()*300 - 150}px)`; ember.style.top = `calc(50% + ${Math.random()*50}px)`;
+            ember.style.setProperty('--drift', (Math.random()*100-50)+'px');
+            document.getElementById('winner-overlay').appendChild(ember);
+            ember.animate([{transform:'translateY(0) scale(1)', opacity:1}, {transform:'translateY(-200px) translateX(var(--drift)) scale(0)', opacity:0}], {duration:1500}).onfinish=()=>ember.remove();
+        }
+
+        function triggerGateSparks() {
+            const gate = document.getElementById('grand-gate');
+            const count = 30; 
+            for(let i=0; i<count; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'spark-impact';
+                spark.style.top = Math.random() * 100 + '%';
+                const angle = Math.random() * 180 - 90; 
+                gate.appendChild(spark);
+                spark.animate([
+                    { transform: `rotate(${angle}deg) scaleY(1) translateY(0)`, opacity: 1 },
+                    { transform: `rotate(${angle}deg) scaleY(0.5) translateY(${Math.random()*150 + 50}px)`, opacity: 0 }
+                ], { duration: 400 + Math.random()*300, easing: 'ease-out' }).onfinish = () => spark.remove();
+            }
+        }
+
+        function spawnChaosSmoke() {
+            const overlay = document.getElementById('winner-overlay');
+            const count = 25; 
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+
+            for(let i=0; i<count; i++) {
+                const smoke = document.createElement('div');
+                smoke.className = 'chaos-smoke';
+                const size = Math.random() * 100 + 50; 
+                smoke.style.width = size + 'px'; smoke.style.height = size + 'px';
+                smoke.style.left = (centerX - size/2) + 'px';
+                smoke.style.top = (centerY - size/2) + 'px';
+                overlay.appendChild(smoke);
+
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 400 + 150; 
+                const tx = Math.cos(angle) * velocity;
+                const ty = Math.sin(angle) * velocity;
+
+                smoke.animate([
+                    { transform: 'translate(0, 0) scale(0.2)', opacity: 0.8 },
+                    { transform: `translate(${tx}px, ${ty}px) scale(2.5)`, opacity: 0 }
+                ], { duration: 1500 + Math.random()*1000, easing: 'ease-out', fill: 'forwards' }).onfinish = () => smoke.remove();
+            }
+        }
+
+        function celebrateWinner(name) {
+            const overlay = document.getElementById('winner-overlay'); const nameEl = document.getElementById('winner-name-big');
+            const shockwave = document.getElementById('shockwave'); const flash = document.getElementById('flash-screen');
+            const tapGuide = document.getElementById('tap-guide'); const cracks = document.getElementById('cracks-container');
+            
+            nameEl.textContent = name; 
+            nameEl.classList.remove('winner-dead-drop', 'fire-mode'); 
+            nameEl.style.opacity = '0'; 
+            shockwave.classList.remove('winner-shockwave-active'); flash.classList.remove('flash-active');
+            tapGuide.classList.remove('tap-visible'); cracks.innerHTML = ''; 
+            if(emberInterval) clearInterval(emberInterval);
+            isWinnerWaitState = false; overlay.classList.remove('is-hidden');
+            
+            // --- 1. ĐÓNG CỔNG (GATE CLOSE) ---
+            const gate = document.getElementById('grand-gate');
+            gate.classList.add('gate-closed');
+            document.body.classList.add('rumble-active'); // Bắt đầu rung
+            triggerLightningStorm(); // SÉT ĐÁNH KHI CỬA ĐÓNG
+
+            // Chờ 1.2s (khi cửa đóng hoàn toàn)
+            setTimeout(() => {
+                // Âm thanh va chạm mạnh
+                try { 
+                    const slam = document.getElementById('sound-slam'); slam.volume = 1.0; slam.currentTime = 0; slam.play();
+                } catch(e){}
+
+                // Hiệu ứng va chạm
+                gate.classList.add('impact-active'); 
+                triggerGateSparks(); 
+                triggerLightningStorm(); // SÉT ĐÁNH CÚ CHÓT
+                
+                document.body.classList.add('screen-explode-shake'); 
+                document.body.classList.remove('rumble-active'); // Tạm dừng rung liên tục
+
+                setTimeout(() => {
+                    gate.classList.remove('impact-active');
+                    document.body.classList.remove('screen-explode-shake');
+                }, 600);
+
+            }, 1200);
+
+            // --- 2. CHỜ 3.5S (TẠO SỰ BÍ ẨN) ---
+            setTimeout(() => {
+                // --- 3. MỞ CỔNG (GATE OPEN - CHẬM 10s) ---
+                gate.classList.remove('gate-closed');
+                document.body.classList.add('rumble-active'); // Rung lại khi mở cửa
+                // Không đánh sét lúc mở để tập trung vào tên
+
+                // Chờ cửa hé ra một chút rồi mới thả chữ (2.5s)
+                setTimeout(() => {
+                    nameEl.style.opacity = '1';
+                    try { const whoosh = document.getElementById('sound-whoosh'); whoosh.volume = 0.8; whoosh.currentTime = 0; whoosh.play(); } catch(e){}
+                    
+                    void nameEl.offsetWidth; nameEl.classList.add('winner-dead-drop');
+                    
+                    setTimeout(() => {
+                        spawnChaosSmoke(); 
+
+                        flash.classList.add('flash-active'); document.body.classList.add('screen-explode-shake');
+                        triggerLightningStorm(); // SÉT ĐÁNH KHI TÊN RƠI
+
+                        setTimeout(() => document.body.classList.remove('screen-explode-shake'), 500);
+                        shockwave.classList.add('winner-shockwave-active'); createGlassShards(); nameEl.classList.add('fire-mode');
+                        
+                        try { 
+                            const boom = document.getElementById('sound-boom'); boom.volume = 1.0; boom.currentTime = 0; boom.play(); 
+                            const slam = document.getElementById('sound-slam'); slam.volume = 1.0; slam.currentTime = 0; slam.play(); 
+                        } catch(e){} 
+                        try { document.getElementById('sound-correct').play(); } catch(e){}
+                        
+                        isWinnerWaitState = true; tapGuide.classList.add('tap-visible'); emberInterval = setInterval(spawnEmbers, 100);
+                    }, 350);
+                }, 2500); 
+
+                setTimeout(() => {
+                     document.body.classList.remove('rumble-active');
+                }, 10000); // Tắt rung sau 10s
+
+            }, 3500); 
+        }
+
+        // CLICK ĐỂ BỎ QUA: DỪNG RUNG NGAY LẬP TỨC
+        document.addEventListener('click', function(e) {
+            // Ignore clicks on the fullscreen button
+            if (e.target.closest('.btn-fullscreen')) return;
+
+            if(isWinnerWaitState) {
+                isWinnerWaitState = false; if(emberInterval) clearInterval(emberInterval);
+                document.getElementById('winner-overlay').classList.add('is-hidden'); 
+                
+                stopShaking(); // <--- QUAN TRỌNG: Dừng mọi rung lắc
+                
+                showRanking(true);
             }
         });
 
-        // --- SỰ KIỆN PHÍM ---
-        document.addEventListener('keydown', function(event) {
-            if (event.key === "ArrowRight" || event.key === " " || event.key === "Enter") {
-                handleNext();
-            } else if (event.key === "ArrowLeft") {
-                handlePrev();
-            }
-        });
-        
-        // CHẠY LẦN ĐẦU
-        initZIndex();
-        updatePageNum();
+        function showRanking(show) {
+            const overlay = document.getElementById('ranking-overlay');
+            stopShaking(); // Đảm bảo dừng rung khi vào bảng xếp hạng
+            if(show) {
+                const tbody = document.getElementById('ranking-body'); tbody.innerHTML = '';
+                let data = JSON.parse(localStorage.getItem('altp_ranking') || '[]');
+                if(data.length === 0) tbody.innerHTML = '<tr><td colspan="4">Chưa có dữ liệu</td></tr>';
+                else { data.forEach((item, idx) => tbody.innerHTML += `<tr><td>${idx + 1}</td><td>${item.name}</td><td>${item.score}</td><td>${item.money}</td></tr>`); }
+                overlay.classList.remove('is-hidden');
+            } else { overlay.classList.add('is-hidden'); }
+        }
+        function startFromRanking() { showRanking(false); startGame(); }
+        function resetRanking() { if(confirm("Xóa bảng xếp hạng?")) { localStorage.removeItem('altp_ranking'); showRanking(true); } }
 
+        function startGame() {
+            stopShaking(); // Đảm bảo sạch sẽ trước khi bắt đầu
+            let shuffledQs = shuffle([...questionsData]);
+            currentQuestions = shuffledQs.map(q => {
+                const correctAnswerText = q.o[q.c]; const shuffledOptions = shuffle([...q.o]);
+                return { q: q.q, o: shuffledOptions, c: shuffledOptions.indexOf(correctAnswerText) };
+            });
+            currentQIndex = -1; const spinner = document.getElementById('spinner-screen');
+            spinner.classList.remove('slide-center'); spinner.classList.add('slide-out-left');
+            
+            document.body.classList.add('screen-explode-shake');
+            triggerLightningStorm(); // SÉT ĐÁNH KHI START GAME
+            setTimeout(() => document.body.classList.remove('screen-explode-shake'), 500);
+
+            setTimeout(() => { spinner.classList.add('is-hidden'); nextLevel(); }, 600);
+        }
+
+        function nextLevel() {
+            currentQIndex++; if (currentQIndex >= currentQuestions.length) { gameOver(true); return; }
+            if (currentQIndex > 0) showMoneyAnimation(); else showQuizScreenDirectly();
+        }
+
+        function showMoneyAnimation() {
+            const ms = document.getElementById('money-screen'); const qs = document.getElementById('quiz-screen');
+            qs.classList.add('is-hidden'); qs.classList.remove('slide-center');
+            ms.classList.remove('is-hidden', 'slide-out-left', 'slide-center'); ms.classList.add('slide-in-right');
+            
+            // Rung màn hình nhẹ khi chuyển cảnh
+            document.body.classList.add('screen-explode-shake');
+            triggerLightningStorm(); // SÉT ĐÁNH KHI HIỆN TIỀN
+            setTimeout(() => document.body.classList.remove('screen-explode-shake'), 500);
+
+            try { const whoosh = document.getElementById('sound-whoosh'); whoosh.volume = 0.6; whoosh.currentTime = 0; whoosh.play(); } catch(e){}
+
+            document.querySelectorAll('#money-list li').forEach(li => {
+                li.classList.remove('active', 'jump-slam-anim'); const oldWave = li.querySelector('.ladder-shockwave'); if(oldWave) oldWave.remove();
+            });
+            const cardContainer = document.getElementById('money-card-container');
+            cardContainer.classList.remove('impact-shake');
+
+            setTimeout(() => {
+                ms.classList.remove('slide-in-right'); ms.classList.add('slide-center');
+                setTimeout(() => {
+                    const curLi = document.querySelector(`li[data-idx="${currentQIndex}"]`);
+                    if(curLi) { 
+                        curLi.scrollIntoView({behavior: "smooth", block: "center"});
+                        setTimeout(() => {
+                            curLi.classList.add('jump-slam-anim'); 
+                            
+                            setTimeout(() => {
+                                try { 
+                                    const slam = document.getElementById('sound-slam'); slam.volume = 1.0; slam.currentTime = 0; slam.play();
+                                    const boom = document.getElementById('sound-boom'); boom.volume = 0.8; boom.currentTime = 0; boom.play();
+                                } catch(e){}
+                                
+                                cardContainer.classList.add('impact-shake');
+                                createSteamEffect(curLi); 
+                                createLadderSparks(curLi.getBoundingClientRect());
+                                curLi.classList.add('active');
+                                const shock = document.createElement('div'); shock.className = 'ladder-shockwave ladder-shockwave-active';
+                                curLi.appendChild(shock); setTimeout(() => shock.remove(), 600);
+
+                            }, 400); 
+                        }, 300); 
+                    }
+                }, 600);
+                setTimeout(() => {
+                    ms.classList.remove('slide-center'); ms.classList.add('slide-out-left');
+                    setTimeout(() => { ms.classList.add('is-hidden'); ms.classList.remove('slide-out-left'); showQuizScreenDirectly(); }, 1500); 
+                }, 4500);
+            }, 50);
+        }
+
+        function showQuizScreenDirectly() {
+            const qs = document.getElementById('quiz-screen'); loadQuestionUI();
+            qs.classList.remove('is-hidden', 'slide-out-left', 'slide-center'); qs.classList.add('slide-in-right');
+            
+            // Rung màn hình nhẹ khi chuyển cảnh
+            document.body.classList.add('screen-explode-shake');
+            triggerLightningStorm(); // SÉT ĐÁNH KHI VÀO CÂU HỎI
+            setTimeout(() => document.body.classList.remove('screen-explode-shake'), 500);
+
+            setTimeout(() => { qs.classList.remove('slide-in-right'); qs.classList.add('slide-center'); }, 50);
+        }
+        function loadQuestionUI() {
+            isLocked = false; const q = currentQuestions[currentQIndex];
+            document.getElementById('question-text').textContent = q.q;
+            const grid = document.getElementById('answers-container'); grid.innerHTML = '';
+            const labels = ["A", "B", "C", "D"];
+            q.o.forEach((opt, i) => {
+                const btn = document.createElement('button'); btn.className = 'answer-btn';
+                btn.innerHTML = `<span>${labels[i]}:</span> ${opt}`; btn.onclick = () => checkAnswer(i, q.c, btn); grid.appendChild(btn);
+            });
+            const btn5050 = document.getElementById('btn-5050');
+            if(btn5050.dataset.used === "true") { btn5050.disabled = true; btn5050.style.opacity = 0.5; } 
+            else { btn5050.disabled = false; btn5050.style.opacity = 1; btn5050.dataset.used = "false"; }
+        }
+        function checkAnswer(idx, correct, btn) {
+            if(isLocked) return; isLocked = true;
+            if (idx === correct) {
+                btn.classList.add('correct'); try { document.getElementById('sound-correct').play(); } catch(e){}
+                setTimeout(() => {
+                    const qs = document.getElementById('quiz-screen'); qs.classList.remove('slide-center'); qs.classList.add('slide-out-left');
+                    setTimeout(() => { qs.classList.add('is-hidden'); nextLevel(); }, 800);
+                }, 2000);
+            } else {
+                btn.classList.add('incorrect'); document.querySelectorAll('.answer-btn')[correct].classList.add('correct');
+                try { document.getElementById('sound-wrong').play(); } catch(e){} setTimeout(() => gameOver(false), 2500);
+            }
+        }
+        function gameOver(isWin) {
+            stopShaking();
+            let prize = "0"; let safeIndex = -1; const reachedIndex = currentQIndex - 1;
+            if (isWin) prize = moneyLevels[moneyLevels.length - 1];
+            else { for(let i = safeLevels.length - 1; i >= 0; i--) { if (reachedIndex >= safeLevels[i]) { safeIndex = safeLevels[i]; break; } } if (safeIndex !== -1) prize = moneyLevels[safeIndex]; }
+            let data = JSON.parse(localStorage.getItem('altp_ranking') || '[]');
+            data.push({ name: currentPlayer, score: `${isWin ? currentQuestions.length : currentQIndex}/${currentQuestions.length}`, money: prize });
+            data.sort((a, b) => parseInt(b.money.replace(/\./g,'')) - parseInt(a.money.replace(/\./g,'')));
+            localStorage.setItem('altp_ranking', JSON.stringify(data));
+            
+            const resOverlay = document.getElementById('result-overlay'); const titleEl = document.getElementById('res-title');
+            if (isWin) { titleEl.textContent = "VÔ ĐỊCH!"; titleEl.style.color = "#00ff00"; titleEl.style.textShadow = "0 0 20px #00ff00"; } 
+            else { titleEl.textContent = "DỪNG CUỘC CHƠI"; titleEl.style.color = "#ff3333"; titleEl.style.textShadow = "0 0 20px #ff0000"; }
+            
+            document.getElementById('res-name').textContent = currentPlayer; 
+            document.getElementById('res-score').textContent = `Kết quả: Đúng ${isWin ? currentQuestions.length : currentQIndex} câu`;
+            document.getElementById('res-money').textContent = prize + " VNĐ";
+            document.getElementById('quiz-screen').classList.add('is-hidden'); resOverlay.classList.remove('is-hidden');
+            document.getElementById('btn-5050').dataset.used = "false";
+        }
+        function use5050() {
+            const btn = document.getElementById('btn-5050'); if(isLocked || btn.disabled) return;
+            const q = currentQuestions[currentQIndex]; const btns = document.querySelectorAll('.answer-btn');
+            let wrongs = [0,1,2,3].filter(i => i !== q.c).sort(()=>Math.random()-0.5);
+            wrongs.slice(0,2).forEach(i => btns[i].classList.add('removed'));
+            btn.disabled = true; btn.style.opacity = 0.5; btn.dataset.used = "true";
+        }
     </script>
 </body>
 </html>
