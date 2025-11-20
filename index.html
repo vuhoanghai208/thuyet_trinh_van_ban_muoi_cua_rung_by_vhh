@@ -12,10 +12,10 @@
             --bronze-texture: #2b1d0e;
             --blue-box: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
             
-            /* --- ĐIỀU CHỈNH CỠ CHỮ TẠI ĐÂY --- */
+            /* --- CỠ CHỮ LỚN CHO MÀN HÌNH RỘNG --- */
             --font-huge: clamp(4rem, 8vw, 9rem);      /* Tiêu đề game */
-            --font-big: clamp(2.5rem, 5vw, 6rem);     /* Câu hỏi (Đã tăng lên) */
-            --font-medium: clamp(1.8rem, 3.5vw, 4rem); /* Đáp án (Đã tăng lên) */
+            --font-big: clamp(2.5rem, 5vw, 6rem);     /* Câu hỏi */
+            --font-medium: clamp(1.8rem, 3.5vw, 4rem); /* Đáp án */
             
             --gold-color: #ffcc00;
         }
@@ -553,6 +553,7 @@
         const baseMoneyLevels = ["200.000", "400.000", "600.000", "1.000.000", "2.000.000", "3.000.000", "6.000.000", "10.000.000", "14.000.000", "22.000.000", "30.000.000", "40.000.000", "60.000.000", "85.000.000", "150.000.000"];
         let moneyLevels = [], safeLevels = []; 
         const questionsData = [
+            // --- CÂU HỎI CŨ ---
             { q: "Tác phẩm “Muối của rừng” được viết bởi tác giả nào?", o: ["Tô Hoài", "Nguyễn Minh Châu", "Nguyễn Huy Thiệp", "Ma Văn Kháng"], c: 2 },
             { q: "Nghề nghiệp của ông Diểu là gì?", o: ["Chăn thả gia súc", "Làm nương rẫy", "Đi săn", "Làm gỗ"], c: 2 },
             { q: "Loài vật xuất hiện trong truyện là gì?", o: ["Khỉ", "Vượn", "Hổ", "Nai"], c: 1 },
@@ -582,7 +583,19 @@
             { q: "Chọn nhận xét đúng nhất về nhân vật ông Diểu:", o: ["Ông là người độc ác", "Ông vô cảm từ đầu đến cuối", "Biết thức tỉnh và hối lỗi", "Ông thù hằn loài vượn"], c: 2 },
             { q: "Dòng nào nói đúng nhất về ý nghĩa của truyện?", o: ["Khẳng định sức mạnh con người", "Sự giao cảm người và thiên nhiên", "Phê phán thú dữ rừng xanh", "Ca ngợi săn bắn"], c: 1 },
             { q: "Chi tiết vượn cái hi sinh cho thấy thông điệp gì?", o: ["Rừng cần được bảo vệ", "Rừng không quan trọng", "Rừng nên bị khai thác nhanh hơn", "Rừng chỉ dành cho thú"], c: 0 },
-            { q: "Tên truyện “Muối của rừng” giúp hiểu rằng:", o: ["Thiên nhiên có vị mặn thật", "Rừng là nơi nguy hiểm", "Rừng dạy giá trị tinh thần bền vững", "Đi rừng phải mang theo muối"], c: 2 }
+            { q: "Tên truyện “Muối của rừng” giúp hiểu rằng:", o: ["Thiên nhiên có vị mặn thật", "Rừng là nơi nguy hiểm", "Rừng dạy giá trị tinh thần bền vững", "Đi rừng phải mang theo muối"], c: 2 },
+
+            // --- 10 CÂU VDC MỚI THÊM ---
+            { q: "Nếu thay đổi chi tiết: “Con vượn cái không cứu ông Diểu trong cháy rừng” thì thông điệp của truyện sẽ biến đổi theo hướng nào?", o: ["Truyện trở nên logic và tự nhiên hơn", "Truyện nhấn mạnh bản năng hoang dã của thú rừng", "Truyện mất đi giá trị nhân văn, không còn ý nghĩa thức tỉnh lương tri", "Truyện trở nên hấp dẫn hơn nhờ sự dữ dội"], c: 2 },
+            { q: "Hành động “phá bẫy nhưng không tấn công ông Diểu” của vượn cái chủ yếu tạo ra kiểu mâu thuẫn nghệ thuật nào?", o: ["Mâu thuẫn nội tâm phức tạp của vượn", "Mâu thuẫn giữa bản năng và lý trí của loài vật theo hướng nhân hóa", "Mâu thuẫn xã hội giữa người – người", "Mâu thuẫn giữa thiên nhiên và xã hội hiện đại"], c: 1 },
+            { q: "Hình ảnh con vượn cái được xem như “tấm gương phản chiếu” tâm hồn ông Diểu vì:", o: ["Nó hành động y hệt ông", "Nó khiến ông nhận ra phần người còn lại trong chính mình", "Nó giúp ông tồn tại trong rừng sâu", "Nó biết giao tiếp như con người"], c: 1 },
+            { q: "Xét theo lý thuyết “đảo chiều hành động” trong truyện ngắn hiện đại, hành động cứu ông Diểu của vượn cái thuộc dạng:", o: ["Hành động củng cố sự thù hằn", "Hành động phá vỡ logic cảm xúc thông thường để tạo giá trị nhân bản", "Hành động phản tự nhiên gây vô lý", "Hành động mang tính giải trí"], c: 1 },
+            { q: "Nếu nhìn từ góc độ sinh thái học, cái chết của vượn cái có thể được hiểu sâu nhất theo hướng nào?", o: ["Kết thúc bi kịch loài thú", "Sự trả giá tất yếu của rừng", "Sự cảnh báo về hệ quả của việc con người can thiệp vào hệ sinh thái", "Một chi tiết ngẫu nhiên không quan trọng"], c: 2 },
+            { q: "Chi tiết con vượn cái “nhìn ông Diểu từ xa, ánh mắt buồn rầu” có ý nghĩa nghệ thuật gần nhất với biện pháp nào?", o: ["Điểm nhìn đa tuyến", "Liên tưởng tượng trưng – làm mờ ranh giới người và thú", "Đòn bẩy xung đột vật chất", "Phóng đại hiện thực"], c: 1 },
+            { q: "Nếu đặt truyện trong mạch sáng tác của Nguyễn Huy Thiệp, thì “muối của rừng” có thể liên hệ mạnh nhất với tư tưởng nào sau đây?", o: ["Con người là trung tâm của vũ trụ", "Thiên nhiên luôn chiến thắng con người", "Giá trị thiện lương tồn tại ngay trong những thứ hoang dã nhất", "Mọi hành động của con người đều vô nghĩa"], c: 2 },
+            { q: "Chi tiết vượn cái cứu ông Diểu dù ông từng giết bạn nó phản ánh triết lí nào?", o: ["Lòng tốt có thể vượt qua nỗi đau và mất mát", "Sự sống luôn thắng cái chết", "Tự nhiên luôn yếu đuối trước con người", "Oán trả oán mới là quy luật tồn tại"], c: 0 },
+            { q: "Tại sao có thể xem hình tượng vượn cái như một “phản biện” đối với cách nhìn phiến diện về thiên nhiên?", o: ["Vì nó hành động theo bản năng không kiểm soát được", "Vì nó chứng minh rằng thiên nhiên không chỉ hung dữ hay vô cảm, mà cũng biết yêu thương, hy sinh", "Vì nó chiến đấu để bảo vệ lãnh thổ", "Vì nó sợ con người nên phải tránh"], c: 1 },
+            { q: "Câu chuyện “vượn cứu người” đặt trong bối cảnh truyện ngắn Việt Nam hiện đại thể hiện gì về phong cách Nguyễn Huy Thiệp?", o: ["Thiên về sự kì ảo và hoang đường", "Dùng tính cách loài vật để soi sáng bản chất con người theo cách hiện thực – biểu tượng", "Chỉ phê phán thợ săn", "Chủ yếu miêu tả cảnh rừng núi"], c: 1 }
         ];
 
         let currentPlayer = "", currentQIndex = -1, currentQuestions = [], isLocked = false, sparkInterval, emberInterval;
